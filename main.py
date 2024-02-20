@@ -91,3 +91,31 @@ tokens = (
     'WHILE', 
     'NEWLINE'
 )
+
+def p_program_classlist(p):
+    'program : class_list'
+    p[0] = p[1]
+
+def p_classlist_one(p):
+    'class_list : class SEMI'
+    p[0] = [p[1]]
+
+def p_classlist_some(p):
+    'classlist : class SEMI classlist'
+    p[0] = [p[1]] + p[3]
+
+def p_class_noinherit(p):
+    'class : CLASS type LBRACE featurelist RBRACE'
+    p[0] = (p.lineno(1), 'class_noinherit', p[2], p[4])
+
+def p_type(p):
+    'type : TYPE'
+    p[0] = (p.lineno(1), p[1])
+
+def p_featurelist_none(p):
+    'featurelist :'
+    p[0] = []
+
+def p_featurelist_some(p):
+    'featurelist : feature SEMI featurelist'
+    p[0] = [p[1]] + p[3]
