@@ -1,6 +1,6 @@
 #this is the parser for PA-3
 import sys
-from lexer import LexToken
+from lex import LexToken
 import yacc as yacc
 
 tokens_filename = sys.argv[1]
