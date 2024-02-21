@@ -92,6 +92,11 @@ tokens = (
     'NEWLINE'
 )
 
+precedence = ( ('left', 'PLUS'),
+              ('left', 'MINUS'),
+              ('left', 'TIMES')  #binds more tightly
+              )
+
 def p_program_classlist(p):
     'program : classlist'
     p[0] = p[1]
@@ -128,6 +133,26 @@ def p_feature_attributenoinit(p):
     'feature : identifier COLON type'
     p[0] = (p.lineno(1), 'attribute_no_init', p[1], p[3])
 
+def p_feature_attributeinit(p):
+    'feature : identifier COLON type LARROW exp'
+    p[0] = (p.lineno(1), 'attribute_init', p[1], p[3], p[5])
+
+def p_exp_plus(p):
+    'exp : exp PLUS exp'
+    p[0] = ((p[1])[0], 'plus' , p[1], p[3]) 
+
+def p_exp_miuns(p):
+    'exp : exp MINUS exp'
+    p[0] = ((p[1])[0], 'minus' , p[1], p[3]) 
+
+def p_exp_times(p):
+    'exp : exp TIMES exp'
+    p[0] = ((p[1])[0], 'times' , p[1], p[3]) 
+
+def p_exp_integer(p):
+    'exp : INTEGER'
+    p[0] = (p.lineno(1), 'integer', p[1])
+
 def p_error(p):
     if p:
          print("Error: ", p.lineno, ": Parser:  parse error near ", p.type)
@@ -151,10 +176,32 @@ def print_identifier(ast):
     fout.write(str(ast[0]) + "\n")
     fout.write(ast[1] + "\n")
 
+def print_exp(ast):
+    fout.write(str(ast[0])+"\n")
+    if ast[1] in ['plus', 'minus', 'times']:
+        fout.write(ast[1] + "\n")
+        print_exp(ast[2])
+        print_exp(ast[3])
+    elif ast[1] in ['integer']:
+        fout.write(ast[1] + "\n")
+        fout.write(str(ast[2]) + "\n")
+    else :
+        print("unhandled expression" + ast[1])
+        exit(1)
+
 def print_feature(ast):
-    fout.write("attribute_no_init\n")
-    print_identifier(ast[2])
-    print_identifier(ast[3])
+    if ast[1]== 'attribute_no_init':
+        fout.write("attribute_no_init\n")
+        print_identifier(ast[2])
+        print_identifier(ast[3])
+    elif ast[1]== 'attribute_init':
+        fout.write("attribute_init\n")
+        print_identifier(ast[2])
+        print_identifier(ast[3])
+        print_exp(ast[4])
+    else :
+        print("unhandled expression" + ast[1])
+        exit(1)
 
 def print_list(ast, print_element_function):
     fout.write(str(len(ast))+ "\n") 
