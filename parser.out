@@ -1,0 +1,1074 @@
+Created by PLY version 3.8 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    AT
+    CASE
+    COMMA
+    COMMENT
+    DOT
+    ELSE
+    ESAC
+    FALSE
+    FI
+    IF
+    IN
+    ISVOID
+    LET
+    LOOP
+    NEW
+    NUMBER
+    OF
+    POOL
+    RARROW
+    STRING
+    THEN
+    TRUE
+    WHILE
+    NEWLINE
+
+Grammar
+
+Rule 0     S' -> program
+Rule 1     program -> classlist
+Rule 2     classlist -> <empty>
+Rule 3     classlist -> class SEMI classlist
+Rule 4     class -> CLASS type LBRACE featurelist RBRACE
+Rule 5     class -> CLASS type INHERITS type LBRACE featurelist RBRACE
+Rule 6     type -> TYPE
+Rule 7     identifier -> IDENTIFIER
+Rule 8     featurelist -> <empty>
+Rule 9     featurelist -> feature SEMI featurelist
+Rule 10    feature -> identifier COLON type
+Rule 11    feature -> identifier COLON type LARROW exp
+Rule 12    exp -> identifier LPAREN RPAREN
+Rule 13    exp -> exp PLUS exp
+Rule 14    exp -> exp MINUS exp
+Rule 15    exp -> exp TIMES exp
+Rule 16    exp -> exp DIVIDE exp
+Rule 17    exp -> TILDE exp
+Rule 18    exp -> exp LT exp
+Rule 19    exp -> exp LE exp
+Rule 20    exp -> exp EQUALS exp
+Rule 21    exp -> NOT exp
+Rule 22    exp -> LPAREN exp RPAREN
+Rule 23    exp -> INTEGER
+
+Terminals, with rules where they appear
+
+AT                   : 
+CASE                 : 
+CLASS                : 4 5
+COLON                : 10 11
+COMMA                : 
+COMMENT              : 
+DIVIDE               : 16
+DOT                  : 
+ELSE                 : 
+EQUALS               : 20
+ESAC                 : 
+FALSE                : 
+FI                   : 
+IDENTIFIER           : 7
+IF                   : 
+IN                   : 
+INHERITS             : 5
+INTEGER              : 23
+ISVOID               : 
+LARROW               : 11
+LBRACE               : 4 5
+LE                   : 19
+LET                  : 
+LOOP                 : 
+LPAREN               : 12 22
+LT                   : 18
+MINUS                : 14
+NEW                  : 
+NEWLINE              : 
+NOT                  : 21
+NUMBER               : 
+OF                   : 
+PLUS                 : 13
+POOL                 : 
+RARROW               : 
+RBRACE               : 4 5
+RPAREN               : 12 22
+SEMI                 : 3 9
+STRING               : 
+THEN                 : 
+TILDE                : 17
+TIMES                : 15
+TRUE                 : 
+TYPE                 : 6
+WHILE                : 
+error                : 
+
+Nonterminals, with rules where they appear
+
+class                : 3
+classlist            : 1 3
+exp                  : 11 13 13 14 14 15 15 16 16 17 18 18 19 19 20 20 21 22
+feature              : 9
+featurelist          : 4 5 9
+identifier           : 10 11 12
+program              : 0
+type                 : 4 5 5 10 11
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . program
+    (1) program -> . classlist
+    (2) classlist -> .
+    (3) classlist -> . class SEMI classlist
+    (4) class -> . CLASS type LBRACE featurelist RBRACE
+    (5) class -> . CLASS type INHERITS type LBRACE featurelist RBRACE
+
+    $end            reduce using rule 2 (classlist -> .)
+    CLASS           shift and go to state 4
+
+    program                        shift and go to state 1
+    classlist                      shift and go to state 2
+    class                          shift and go to state 3
+
+state 1
+
+    (0) S' -> program .
+
+
+
+state 2
+
+    (1) program -> classlist .
+
+    $end            reduce using rule 1 (program -> classlist .)
+
+
+state 3
+
+    (3) classlist -> class . SEMI classlist
+
+    SEMI            shift and go to state 5
+
+
+state 4
+
+    (4) class -> CLASS . type LBRACE featurelist RBRACE
+    (5) class -> CLASS . type INHERITS type LBRACE featurelist RBRACE
+    (6) type -> . TYPE
+
+    TYPE            shift and go to state 7
+
+    type                           shift and go to state 6
+
+state 5
+
+    (3) classlist -> class SEMI . classlist
+    (2) classlist -> .
+    (3) classlist -> . class SEMI classlist
+    (4) class -> . CLASS type LBRACE featurelist RBRACE
+    (5) class -> . CLASS type INHERITS type LBRACE featurelist RBRACE
+
+    $end            reduce using rule 2 (classlist -> .)
+    CLASS           shift and go to state 4
+
+    class                          shift and go to state 3
+    classlist                      shift and go to state 8
+
+state 6
+
+    (4) class -> CLASS type . LBRACE featurelist RBRACE
+    (5) class -> CLASS type . INHERITS type LBRACE featurelist RBRACE
+
+    LBRACE          shift and go to state 9
+    INHERITS        shift and go to state 10
+
+
+state 7
+
+    (6) type -> TYPE .
+
+    LBRACE          reduce using rule 6 (type -> TYPE .)
+    INHERITS        reduce using rule 6 (type -> TYPE .)
+    LARROW          reduce using rule 6 (type -> TYPE .)
+    SEMI            reduce using rule 6 (type -> TYPE .)
+
+
+state 8
+
+    (3) classlist -> class SEMI classlist .
+
+    $end            reduce using rule 3 (classlist -> class SEMI classlist .)
+
+
+state 9
+
+    (4) class -> CLASS type LBRACE . featurelist RBRACE
+    (8) featurelist -> .
+    (9) featurelist -> . feature SEMI featurelist
+    (10) feature -> . identifier COLON type
+    (11) feature -> . identifier COLON type LARROW exp
+    (7) identifier -> . IDENTIFIER
+
+    RBRACE          reduce using rule 8 (featurelist -> .)
+    IDENTIFIER      shift and go to state 14
+
+    featurelist                    shift and go to state 11
+    feature                        shift and go to state 12
+    identifier                     shift and go to state 13
+
+state 10
+
+    (5) class -> CLASS type INHERITS . type LBRACE featurelist RBRACE
+    (6) type -> . TYPE
+
+    TYPE            shift and go to state 7
+
+    type                           shift and go to state 15
+
+state 11
+
+    (4) class -> CLASS type LBRACE featurelist . RBRACE
+
+    RBRACE          shift and go to state 16
+
+
+state 12
+
+    (9) featurelist -> feature . SEMI featurelist
+
+    SEMI            shift and go to state 17
+
+
+state 13
+
+    (10) feature -> identifier . COLON type
+    (11) feature -> identifier . COLON type LARROW exp
+
+    COLON           shift and go to state 18
+
+
+state 14
+
+    (7) identifier -> IDENTIFIER .
+
+    COLON           reduce using rule 7 (identifier -> IDENTIFIER .)
+    LPAREN          reduce using rule 7 (identifier -> IDENTIFIER .)
+
+
+state 15
+
+    (5) class -> CLASS type INHERITS type . LBRACE featurelist RBRACE
+
+    LBRACE          shift and go to state 19
+
+
+state 16
+
+    (4) class -> CLASS type LBRACE featurelist RBRACE .
+
+    SEMI            reduce using rule 4 (class -> CLASS type LBRACE featurelist RBRACE .)
+
+
+state 17
+
+    (9) featurelist -> feature SEMI . featurelist
+    (8) featurelist -> .
+    (9) featurelist -> . feature SEMI featurelist
+    (10) feature -> . identifier COLON type
+    (11) feature -> . identifier COLON type LARROW exp
+    (7) identifier -> . IDENTIFIER
+
+    RBRACE          reduce using rule 8 (featurelist -> .)
+    IDENTIFIER      shift and go to state 14
+
+    feature                        shift and go to state 12
+    featurelist                    shift and go to state 20
+    identifier                     shift and go to state 13
+
+state 18
+
+    (10) feature -> identifier COLON . type
+    (11) feature -> identifier COLON . type LARROW exp
+    (6) type -> . TYPE
+
+    TYPE            shift and go to state 7
+
+    type                           shift and go to state 21
+
+state 19
+
+    (5) class -> CLASS type INHERITS type LBRACE . featurelist RBRACE
+    (8) featurelist -> .
+    (9) featurelist -> . feature SEMI featurelist
+    (10) feature -> . identifier COLON type
+    (11) feature -> . identifier COLON type LARROW exp
+    (7) identifier -> . IDENTIFIER
+
+    RBRACE          reduce using rule 8 (featurelist -> .)
+    IDENTIFIER      shift and go to state 14
+
+    featurelist                    shift and go to state 22
+    feature                        shift and go to state 12
+    identifier                     shift and go to state 13
+
+state 20
+
+    (9) featurelist -> feature SEMI featurelist .
+
+    RBRACE          reduce using rule 9 (featurelist -> feature SEMI featurelist .)
+
+
+state 21
+
+    (10) feature -> identifier COLON type .
+    (11) feature -> identifier COLON type . LARROW exp
+
+    SEMI            reduce using rule 10 (feature -> identifier COLON type .)
+    LARROW          shift and go to state 23
+
+
+state 22
+
+    (5) class -> CLASS type INHERITS type LBRACE featurelist . RBRACE
+
+    RBRACE          shift and go to state 24
+
+
+state 23
+
+    (11) feature -> identifier COLON type LARROW . exp
+    (12) exp -> . identifier LPAREN RPAREN
+    (13) exp -> . exp PLUS exp
+    (14) exp -> . exp MINUS exp
+    (15) exp -> . exp TIMES exp
+    (16) exp -> . exp DIVIDE exp
+    (17) exp -> . TILDE exp
+    (18) exp -> . exp LT exp
+    (19) exp -> . exp LE exp
+    (20) exp -> . exp EQUALS exp
+    (21) exp -> . NOT exp
+    (22) exp -> . LPAREN exp RPAREN
+    (23) exp -> . INTEGER
+    (7) identifier -> . IDENTIFIER
+
+    TILDE           shift and go to state 28
+    NOT             shift and go to state 29
+    LPAREN          shift and go to state 27
+    INTEGER         shift and go to state 30
+    IDENTIFIER      shift and go to state 14
+
+    identifier                     shift and go to state 25
+    exp                            shift and go to state 26
+
+state 24
+
+    (5) class -> CLASS type INHERITS type LBRACE featurelist RBRACE .
+
+    SEMI            reduce using rule 5 (class -> CLASS type INHERITS type LBRACE featurelist RBRACE .)
+
+
+state 25
+
+    (12) exp -> identifier . LPAREN RPAREN
+
+    LPAREN          shift and go to state 31
+
+
+state 26
+
+    (11) feature -> identifier COLON type LARROW exp .
+    (13) exp -> exp . PLUS exp
+    (14) exp -> exp . MINUS exp
+    (15) exp -> exp . TIMES exp
+    (16) exp -> exp . DIVIDE exp
+    (18) exp -> exp . LT exp
+    (19) exp -> exp . LE exp
+    (20) exp -> exp . EQUALS exp
+
+    SEMI            reduce using rule 11 (feature -> identifier COLON type LARROW exp .)
+    PLUS            shift and go to state 32
+    MINUS           shift and go to state 33
+    TIMES           shift and go to state 34
+    DIVIDE          shift and go to state 35
+    LT              shift and go to state 36
+    LE              shift and go to state 37
+    EQUALS          shift and go to state 38
+
+
+state 27
+
+    (22) exp -> LPAREN . exp RPAREN
+    (12) exp -> . identifier LPAREN RPAREN
+    (13) exp -> . exp PLUS exp
+    (14) exp -> . exp MINUS exp
+    (15) exp -> . exp TIMES exp
+    (16) exp -> . exp DIVIDE exp
+    (17) exp -> . TILDE exp
+    (18) exp -> . exp LT exp
+    (19) exp -> . exp LE exp
+    (20) exp -> . exp EQUALS exp
+    (21) exp -> . NOT exp
+    (22) exp -> . LPAREN exp RPAREN
+    (23) exp -> . INTEGER
+    (7) identifier -> . IDENTIFIER
+
+    TILDE           shift and go to state 28
+    NOT             shift and go to state 29
+    LPAREN          shift and go to state 27
+    INTEGER         shift and go to state 30
+    IDENTIFIER      shift and go to state 14
+
+    exp                            shift and go to state 39
+    identifier                     shift and go to state 25
+
+state 28
+
+    (17) exp -> TILDE . exp
+    (12) exp -> . identifier LPAREN RPAREN
+    (13) exp -> . exp PLUS exp
+    (14) exp -> . exp MINUS exp
+    (15) exp -> . exp TIMES exp
+    (16) exp -> . exp DIVIDE exp
+    (17) exp -> . TILDE exp
+    (18) exp -> . exp LT exp
+    (19) exp -> . exp LE exp
+    (20) exp -> . exp EQUALS exp
+    (21) exp -> . NOT exp
+    (22) exp -> . LPAREN exp RPAREN
+    (23) exp -> . INTEGER
+    (7) identifier -> . IDENTIFIER
+
+    TILDE           shift and go to state 28
+    NOT             shift and go to state 29
+    LPAREN          shift and go to state 27
+    INTEGER         shift and go to state 30
+    IDENTIFIER      shift and go to state 14
+
+    exp                            shift and go to state 40
+    identifier                     shift and go to state 25
+
+state 29
+
+    (21) exp -> NOT . exp
+    (12) exp -> . identifier LPAREN RPAREN
+    (13) exp -> . exp PLUS exp
+    (14) exp -> . exp MINUS exp
+    (15) exp -> . exp TIMES exp
+    (16) exp -> . exp DIVIDE exp
+    (17) exp -> . TILDE exp
+    (18) exp -> . exp LT exp
+    (19) exp -> . exp LE exp
+    (20) exp -> . exp EQUALS exp
+    (21) exp -> . NOT exp
+    (22) exp -> . LPAREN exp RPAREN
+    (23) exp -> . INTEGER
+    (7) identifier -> . IDENTIFIER
+
+    TILDE           shift and go to state 28
+    NOT             shift and go to state 29
+    LPAREN          shift and go to state 27
+    INTEGER         shift and go to state 30
+    IDENTIFIER      shift and go to state 14
+
+    exp                            shift and go to state 41
+    identifier                     shift and go to state 25
+
+state 30
+
+    (23) exp -> INTEGER .
+
+    PLUS            reduce using rule 23 (exp -> INTEGER .)
+    MINUS           reduce using rule 23 (exp -> INTEGER .)
+    TIMES           reduce using rule 23 (exp -> INTEGER .)
+    DIVIDE          reduce using rule 23 (exp -> INTEGER .)
+    LT              reduce using rule 23 (exp -> INTEGER .)
+    LE              reduce using rule 23 (exp -> INTEGER .)
+    EQUALS          reduce using rule 23 (exp -> INTEGER .)
+    SEMI            reduce using rule 23 (exp -> INTEGER .)
+    RPAREN          reduce using rule 23 (exp -> INTEGER .)
+
+
+state 31
+
+    (12) exp -> identifier LPAREN . RPAREN
+
+    RPAREN          shift and go to state 42
+
+
+state 32
+
+    (13) exp -> exp PLUS . exp
+    (12) exp -> . identifier LPAREN RPAREN
+    (13) exp -> . exp PLUS exp
+    (14) exp -> . exp MINUS exp
+    (15) exp -> . exp TIMES exp
+    (16) exp -> . exp DIVIDE exp
+    (17) exp -> . TILDE exp
+    (18) exp -> . exp LT exp
+    (19) exp -> . exp LE exp
+    (20) exp -> . exp EQUALS exp
+    (21) exp -> . NOT exp
+    (22) exp -> . LPAREN exp RPAREN
+    (23) exp -> . INTEGER
+    (7) identifier -> . IDENTIFIER
+
+    TILDE           shift and go to state 28
+    NOT             shift and go to state 29
+    LPAREN          shift and go to state 27
+    INTEGER         shift and go to state 30
+    IDENTIFIER      shift and go to state 14
+
+    exp                            shift and go to state 43
+    identifier                     shift and go to state 25
+
+state 33
+
+    (14) exp -> exp MINUS . exp
+    (12) exp -> . identifier LPAREN RPAREN
+    (13) exp -> . exp PLUS exp
+    (14) exp -> . exp MINUS exp
+    (15) exp -> . exp TIMES exp
+    (16) exp -> . exp DIVIDE exp
+    (17) exp -> . TILDE exp
+    (18) exp -> . exp LT exp
+    (19) exp -> . exp LE exp
+    (20) exp -> . exp EQUALS exp
+    (21) exp -> . NOT exp
+    (22) exp -> . LPAREN exp RPAREN
+    (23) exp -> . INTEGER
+    (7) identifier -> . IDENTIFIER
+
+    TILDE           shift and go to state 28
+    NOT             shift and go to state 29
+    LPAREN          shift and go to state 27
+    INTEGER         shift and go to state 30
+    IDENTIFIER      shift and go to state 14
+
+    exp                            shift and go to state 44
+    identifier                     shift and go to state 25
+
+state 34
+
+    (15) exp -> exp TIMES . exp
+    (12) exp -> . identifier LPAREN RPAREN
+    (13) exp -> . exp PLUS exp
+    (14) exp -> . exp MINUS exp
+    (15) exp -> . exp TIMES exp
+    (16) exp -> . exp DIVIDE exp
+    (17) exp -> . TILDE exp
+    (18) exp -> . exp LT exp
+    (19) exp -> . exp LE exp
+    (20) exp -> . exp EQUALS exp
+    (21) exp -> . NOT exp
+    (22) exp -> . LPAREN exp RPAREN
+    (23) exp -> . INTEGER
+    (7) identifier -> . IDENTIFIER
+
+    TILDE           shift and go to state 28
+    NOT             shift and go to state 29
+    LPAREN          shift and go to state 27
+    INTEGER         shift and go to state 30
+    IDENTIFIER      shift and go to state 14
+
+    exp                            shift and go to state 45
+    identifier                     shift and go to state 25
+
+state 35
+
+    (16) exp -> exp DIVIDE . exp
+    (12) exp -> . identifier LPAREN RPAREN
+    (13) exp -> . exp PLUS exp
+    (14) exp -> . exp MINUS exp
+    (15) exp -> . exp TIMES exp
+    (16) exp -> . exp DIVIDE exp
+    (17) exp -> . TILDE exp
+    (18) exp -> . exp LT exp
+    (19) exp -> . exp LE exp
+    (20) exp -> . exp EQUALS exp
+    (21) exp -> . NOT exp
+    (22) exp -> . LPAREN exp RPAREN
+    (23) exp -> . INTEGER
+    (7) identifier -> . IDENTIFIER
+
+    TILDE           shift and go to state 28
+    NOT             shift and go to state 29
+    LPAREN          shift and go to state 27
+    INTEGER         shift and go to state 30
+    IDENTIFIER      shift and go to state 14
+
+    exp                            shift and go to state 46
+    identifier                     shift and go to state 25
+
+state 36
+
+    (18) exp -> exp LT . exp
+    (12) exp -> . identifier LPAREN RPAREN
+    (13) exp -> . exp PLUS exp
+    (14) exp -> . exp MINUS exp
+    (15) exp -> . exp TIMES exp
+    (16) exp -> . exp DIVIDE exp
+    (17) exp -> . TILDE exp
+    (18) exp -> . exp LT exp
+    (19) exp -> . exp LE exp
+    (20) exp -> . exp EQUALS exp
+    (21) exp -> . NOT exp
+    (22) exp -> . LPAREN exp RPAREN
+    (23) exp -> . INTEGER
+    (7) identifier -> . IDENTIFIER
+
+    TILDE           shift and go to state 28
+    NOT             shift and go to state 29
+    LPAREN          shift and go to state 27
+    INTEGER         shift and go to state 30
+    IDENTIFIER      shift and go to state 14
+
+    exp                            shift and go to state 47
+    identifier                     shift and go to state 25
+
+state 37
+
+    (19) exp -> exp LE . exp
+    (12) exp -> . identifier LPAREN RPAREN
+    (13) exp -> . exp PLUS exp
+    (14) exp -> . exp MINUS exp
+    (15) exp -> . exp TIMES exp
+    (16) exp -> . exp DIVIDE exp
+    (17) exp -> . TILDE exp
+    (18) exp -> . exp LT exp
+    (19) exp -> . exp LE exp
+    (20) exp -> . exp EQUALS exp
+    (21) exp -> . NOT exp
+    (22) exp -> . LPAREN exp RPAREN
+    (23) exp -> . INTEGER
+    (7) identifier -> . IDENTIFIER
+
+    TILDE           shift and go to state 28
+    NOT             shift and go to state 29
+    LPAREN          shift and go to state 27
+    INTEGER         shift and go to state 30
+    IDENTIFIER      shift and go to state 14
+
+    exp                            shift and go to state 48
+    identifier                     shift and go to state 25
+
+state 38
+
+    (20) exp -> exp EQUALS . exp
+    (12) exp -> . identifier LPAREN RPAREN
+    (13) exp -> . exp PLUS exp
+    (14) exp -> . exp MINUS exp
+    (15) exp -> . exp TIMES exp
+    (16) exp -> . exp DIVIDE exp
+    (17) exp -> . TILDE exp
+    (18) exp -> . exp LT exp
+    (19) exp -> . exp LE exp
+    (20) exp -> . exp EQUALS exp
+    (21) exp -> . NOT exp
+    (22) exp -> . LPAREN exp RPAREN
+    (23) exp -> . INTEGER
+    (7) identifier -> . IDENTIFIER
+
+    TILDE           shift and go to state 28
+    NOT             shift and go to state 29
+    LPAREN          shift and go to state 27
+    INTEGER         shift and go to state 30
+    IDENTIFIER      shift and go to state 14
+
+    exp                            shift and go to state 49
+    identifier                     shift and go to state 25
+
+state 39
+
+    (22) exp -> LPAREN exp . RPAREN
+    (13) exp -> exp . PLUS exp
+    (14) exp -> exp . MINUS exp
+    (15) exp -> exp . TIMES exp
+    (16) exp -> exp . DIVIDE exp
+    (18) exp -> exp . LT exp
+    (19) exp -> exp . LE exp
+    (20) exp -> exp . EQUALS exp
+
+    RPAREN          shift and go to state 50
+    PLUS            shift and go to state 32
+    MINUS           shift and go to state 33
+    TIMES           shift and go to state 34
+    DIVIDE          shift and go to state 35
+    LT              shift and go to state 36
+    LE              shift and go to state 37
+    EQUALS          shift and go to state 38
+
+
+state 40
+
+    (17) exp -> TILDE exp .
+    (13) exp -> exp . PLUS exp
+    (14) exp -> exp . MINUS exp
+    (15) exp -> exp . TIMES exp
+    (16) exp -> exp . DIVIDE exp
+    (18) exp -> exp . LT exp
+    (19) exp -> exp . LE exp
+    (20) exp -> exp . EQUALS exp
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for TIMES resolved as shift
+  ! shift/reduce conflict for DIVIDE resolved as shift
+  ! shift/reduce conflict for LT resolved as shift
+  ! shift/reduce conflict for LE resolved as shift
+  ! shift/reduce conflict for EQUALS resolved as shift
+    SEMI            reduce using rule 17 (exp -> TILDE exp .)
+    RPAREN          reduce using rule 17 (exp -> TILDE exp .)
+    PLUS            shift and go to state 32
+    MINUS           shift and go to state 33
+    TIMES           shift and go to state 34
+    DIVIDE          shift and go to state 35
+    LT              shift and go to state 36
+    LE              shift and go to state 37
+    EQUALS          shift and go to state 38
+
+  ! PLUS            [ reduce using rule 17 (exp -> TILDE exp .) ]
+  ! MINUS           [ reduce using rule 17 (exp -> TILDE exp .) ]
+  ! TIMES           [ reduce using rule 17 (exp -> TILDE exp .) ]
+  ! DIVIDE          [ reduce using rule 17 (exp -> TILDE exp .) ]
+  ! LT              [ reduce using rule 17 (exp -> TILDE exp .) ]
+  ! LE              [ reduce using rule 17 (exp -> TILDE exp .) ]
+  ! EQUALS          [ reduce using rule 17 (exp -> TILDE exp .) ]
+
+
+state 41
+
+    (21) exp -> NOT exp .
+    (13) exp -> exp . PLUS exp
+    (14) exp -> exp . MINUS exp
+    (15) exp -> exp . TIMES exp
+    (16) exp -> exp . DIVIDE exp
+    (18) exp -> exp . LT exp
+    (19) exp -> exp . LE exp
+    (20) exp -> exp . EQUALS exp
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for TIMES resolved as shift
+  ! shift/reduce conflict for DIVIDE resolved as shift
+  ! shift/reduce conflict for LT resolved as shift
+  ! shift/reduce conflict for LE resolved as shift
+  ! shift/reduce conflict for EQUALS resolved as shift
+    SEMI            reduce using rule 21 (exp -> NOT exp .)
+    RPAREN          reduce using rule 21 (exp -> NOT exp .)
+    PLUS            shift and go to state 32
+    MINUS           shift and go to state 33
+    TIMES           shift and go to state 34
+    DIVIDE          shift and go to state 35
+    LT              shift and go to state 36
+    LE              shift and go to state 37
+    EQUALS          shift and go to state 38
+
+  ! PLUS            [ reduce using rule 21 (exp -> NOT exp .) ]
+  ! MINUS           [ reduce using rule 21 (exp -> NOT exp .) ]
+  ! TIMES           [ reduce using rule 21 (exp -> NOT exp .) ]
+  ! DIVIDE          [ reduce using rule 21 (exp -> NOT exp .) ]
+  ! LT              [ reduce using rule 21 (exp -> NOT exp .) ]
+  ! LE              [ reduce using rule 21 (exp -> NOT exp .) ]
+  ! EQUALS          [ reduce using rule 21 (exp -> NOT exp .) ]
+
+
+state 42
+
+    (12) exp -> identifier LPAREN RPAREN .
+
+    PLUS            reduce using rule 12 (exp -> identifier LPAREN RPAREN .)
+    MINUS           reduce using rule 12 (exp -> identifier LPAREN RPAREN .)
+    TIMES           reduce using rule 12 (exp -> identifier LPAREN RPAREN .)
+    DIVIDE          reduce using rule 12 (exp -> identifier LPAREN RPAREN .)
+    LT              reduce using rule 12 (exp -> identifier LPAREN RPAREN .)
+    LE              reduce using rule 12 (exp -> identifier LPAREN RPAREN .)
+    EQUALS          reduce using rule 12 (exp -> identifier LPAREN RPAREN .)
+    SEMI            reduce using rule 12 (exp -> identifier LPAREN RPAREN .)
+    RPAREN          reduce using rule 12 (exp -> identifier LPAREN RPAREN .)
+
+
+state 43
+
+    (13) exp -> exp PLUS exp .
+    (13) exp -> exp . PLUS exp
+    (14) exp -> exp . MINUS exp
+    (15) exp -> exp . TIMES exp
+    (16) exp -> exp . DIVIDE exp
+    (18) exp -> exp . LT exp
+    (19) exp -> exp . LE exp
+    (20) exp -> exp . EQUALS exp
+
+    PLUS            reduce using rule 13 (exp -> exp PLUS exp .)
+    MINUS           reduce using rule 13 (exp -> exp PLUS exp .)
+    LT              reduce using rule 13 (exp -> exp PLUS exp .)
+    LE              reduce using rule 13 (exp -> exp PLUS exp .)
+    EQUALS          reduce using rule 13 (exp -> exp PLUS exp .)
+    SEMI            reduce using rule 13 (exp -> exp PLUS exp .)
+    RPAREN          reduce using rule 13 (exp -> exp PLUS exp .)
+    TIMES           shift and go to state 34
+    DIVIDE          shift and go to state 35
+
+  ! TIMES           [ reduce using rule 13 (exp -> exp PLUS exp .) ]
+  ! DIVIDE          [ reduce using rule 13 (exp -> exp PLUS exp .) ]
+  ! PLUS            [ shift and go to state 32 ]
+  ! MINUS           [ shift and go to state 33 ]
+  ! LT              [ shift and go to state 36 ]
+  ! LE              [ shift and go to state 37 ]
+  ! EQUALS          [ shift and go to state 38 ]
+
+
+state 44
+
+    (14) exp -> exp MINUS exp .
+    (13) exp -> exp . PLUS exp
+    (14) exp -> exp . MINUS exp
+    (15) exp -> exp . TIMES exp
+    (16) exp -> exp . DIVIDE exp
+    (18) exp -> exp . LT exp
+    (19) exp -> exp . LE exp
+    (20) exp -> exp . EQUALS exp
+
+    PLUS            reduce using rule 14 (exp -> exp MINUS exp .)
+    MINUS           reduce using rule 14 (exp -> exp MINUS exp .)
+    LT              reduce using rule 14 (exp -> exp MINUS exp .)
+    LE              reduce using rule 14 (exp -> exp MINUS exp .)
+    EQUALS          reduce using rule 14 (exp -> exp MINUS exp .)
+    SEMI            reduce using rule 14 (exp -> exp MINUS exp .)
+    RPAREN          reduce using rule 14 (exp -> exp MINUS exp .)
+    TIMES           shift and go to state 34
+    DIVIDE          shift and go to state 35
+
+  ! TIMES           [ reduce using rule 14 (exp -> exp MINUS exp .) ]
+  ! DIVIDE          [ reduce using rule 14 (exp -> exp MINUS exp .) ]
+  ! PLUS            [ shift and go to state 32 ]
+  ! MINUS           [ shift and go to state 33 ]
+  ! LT              [ shift and go to state 36 ]
+  ! LE              [ shift and go to state 37 ]
+  ! EQUALS          [ shift and go to state 38 ]
+
+
+state 45
+
+    (15) exp -> exp TIMES exp .
+    (13) exp -> exp . PLUS exp
+    (14) exp -> exp . MINUS exp
+    (15) exp -> exp . TIMES exp
+    (16) exp -> exp . DIVIDE exp
+    (18) exp -> exp . LT exp
+    (19) exp -> exp . LE exp
+    (20) exp -> exp . EQUALS exp
+
+    PLUS            reduce using rule 15 (exp -> exp TIMES exp .)
+    MINUS           reduce using rule 15 (exp -> exp TIMES exp .)
+    TIMES           reduce using rule 15 (exp -> exp TIMES exp .)
+    DIVIDE          reduce using rule 15 (exp -> exp TIMES exp .)
+    LT              reduce using rule 15 (exp -> exp TIMES exp .)
+    LE              reduce using rule 15 (exp -> exp TIMES exp .)
+    EQUALS          reduce using rule 15 (exp -> exp TIMES exp .)
+    SEMI            reduce using rule 15 (exp -> exp TIMES exp .)
+    RPAREN          reduce using rule 15 (exp -> exp TIMES exp .)
+
+  ! PLUS            [ shift and go to state 32 ]
+  ! MINUS           [ shift and go to state 33 ]
+  ! TIMES           [ shift and go to state 34 ]
+  ! DIVIDE          [ shift and go to state 35 ]
+  ! LT              [ shift and go to state 36 ]
+  ! LE              [ shift and go to state 37 ]
+  ! EQUALS          [ shift and go to state 38 ]
+
+
+state 46
+
+    (16) exp -> exp DIVIDE exp .
+    (13) exp -> exp . PLUS exp
+    (14) exp -> exp . MINUS exp
+    (15) exp -> exp . TIMES exp
+    (16) exp -> exp . DIVIDE exp
+    (18) exp -> exp . LT exp
+    (19) exp -> exp . LE exp
+    (20) exp -> exp . EQUALS exp
+
+    PLUS            reduce using rule 16 (exp -> exp DIVIDE exp .)
+    MINUS           reduce using rule 16 (exp -> exp DIVIDE exp .)
+    TIMES           reduce using rule 16 (exp -> exp DIVIDE exp .)
+    DIVIDE          reduce using rule 16 (exp -> exp DIVIDE exp .)
+    LT              reduce using rule 16 (exp -> exp DIVIDE exp .)
+    LE              reduce using rule 16 (exp -> exp DIVIDE exp .)
+    EQUALS          reduce using rule 16 (exp -> exp DIVIDE exp .)
+    SEMI            reduce using rule 16 (exp -> exp DIVIDE exp .)
+    RPAREN          reduce using rule 16 (exp -> exp DIVIDE exp .)
+
+  ! PLUS            [ shift and go to state 32 ]
+  ! MINUS           [ shift and go to state 33 ]
+  ! TIMES           [ shift and go to state 34 ]
+  ! DIVIDE          [ shift and go to state 35 ]
+  ! LT              [ shift and go to state 36 ]
+  ! LE              [ shift and go to state 37 ]
+  ! EQUALS          [ shift and go to state 38 ]
+
+
+state 47
+
+    (18) exp -> exp LT exp .
+    (13) exp -> exp . PLUS exp
+    (14) exp -> exp . MINUS exp
+    (15) exp -> exp . TIMES exp
+    (16) exp -> exp . DIVIDE exp
+    (18) exp -> exp . LT exp
+    (19) exp -> exp . LE exp
+    (20) exp -> exp . EQUALS exp
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for TIMES resolved as shift
+  ! shift/reduce conflict for DIVIDE resolved as shift
+  ! shift/reduce conflict for LT resolved as shift
+  ! shift/reduce conflict for LE resolved as shift
+  ! shift/reduce conflict for EQUALS resolved as shift
+    SEMI            reduce using rule 18 (exp -> exp LT exp .)
+    RPAREN          reduce using rule 18 (exp -> exp LT exp .)
+    PLUS            shift and go to state 32
+    MINUS           shift and go to state 33
+    TIMES           shift and go to state 34
+    DIVIDE          shift and go to state 35
+    LT              shift and go to state 36
+    LE              shift and go to state 37
+    EQUALS          shift and go to state 38
+
+  ! PLUS            [ reduce using rule 18 (exp -> exp LT exp .) ]
+  ! MINUS           [ reduce using rule 18 (exp -> exp LT exp .) ]
+  ! TIMES           [ reduce using rule 18 (exp -> exp LT exp .) ]
+  ! DIVIDE          [ reduce using rule 18 (exp -> exp LT exp .) ]
+  ! LT              [ reduce using rule 18 (exp -> exp LT exp .) ]
+  ! LE              [ reduce using rule 18 (exp -> exp LT exp .) ]
+  ! EQUALS          [ reduce using rule 18 (exp -> exp LT exp .) ]
+
+
+state 48
+
+    (19) exp -> exp LE exp .
+    (13) exp -> exp . PLUS exp
+    (14) exp -> exp . MINUS exp
+    (15) exp -> exp . TIMES exp
+    (16) exp -> exp . DIVIDE exp
+    (18) exp -> exp . LT exp
+    (19) exp -> exp . LE exp
+    (20) exp -> exp . EQUALS exp
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for TIMES resolved as shift
+  ! shift/reduce conflict for DIVIDE resolved as shift
+  ! shift/reduce conflict for LT resolved as shift
+  ! shift/reduce conflict for LE resolved as shift
+  ! shift/reduce conflict for EQUALS resolved as shift
+    SEMI            reduce using rule 19 (exp -> exp LE exp .)
+    RPAREN          reduce using rule 19 (exp -> exp LE exp .)
+    PLUS            shift and go to state 32
+    MINUS           shift and go to state 33
+    TIMES           shift and go to state 34
+    DIVIDE          shift and go to state 35
+    LT              shift and go to state 36
+    LE              shift and go to state 37
+    EQUALS          shift and go to state 38
+
+  ! PLUS            [ reduce using rule 19 (exp -> exp LE exp .) ]
+  ! MINUS           [ reduce using rule 19 (exp -> exp LE exp .) ]
+  ! TIMES           [ reduce using rule 19 (exp -> exp LE exp .) ]
+  ! DIVIDE          [ reduce using rule 19 (exp -> exp LE exp .) ]
+  ! LT              [ reduce using rule 19 (exp -> exp LE exp .) ]
+  ! LE              [ reduce using rule 19 (exp -> exp LE exp .) ]
+  ! EQUALS          [ reduce using rule 19 (exp -> exp LE exp .) ]
+
+
+state 49
+
+    (20) exp -> exp EQUALS exp .
+    (13) exp -> exp . PLUS exp
+    (14) exp -> exp . MINUS exp
+    (15) exp -> exp . TIMES exp
+    (16) exp -> exp . DIVIDE exp
+    (18) exp -> exp . LT exp
+    (19) exp -> exp . LE exp
+    (20) exp -> exp . EQUALS exp
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for TIMES resolved as shift
+  ! shift/reduce conflict for DIVIDE resolved as shift
+  ! shift/reduce conflict for LT resolved as shift
+  ! shift/reduce conflict for LE resolved as shift
+  ! shift/reduce conflict for EQUALS resolved as shift
+    SEMI            reduce using rule 20 (exp -> exp EQUALS exp .)
+    RPAREN          reduce using rule 20 (exp -> exp EQUALS exp .)
+    PLUS            shift and go to state 32
+    MINUS           shift and go to state 33
+    TIMES           shift and go to state 34
+    DIVIDE          shift and go to state 35
+    LT              shift and go to state 36
+    LE              shift and go to state 37
+    EQUALS          shift and go to state 38
+
+  ! PLUS            [ reduce using rule 20 (exp -> exp EQUALS exp .) ]
+  ! MINUS           [ reduce using rule 20 (exp -> exp EQUALS exp .) ]
+  ! TIMES           [ reduce using rule 20 (exp -> exp EQUALS exp .) ]
+  ! DIVIDE          [ reduce using rule 20 (exp -> exp EQUALS exp .) ]
+  ! LT              [ reduce using rule 20 (exp -> exp EQUALS exp .) ]
+  ! LE              [ reduce using rule 20 (exp -> exp EQUALS exp .) ]
+  ! EQUALS          [ reduce using rule 20 (exp -> exp EQUALS exp .) ]
+
+
+state 50
+
+    (22) exp -> LPAREN exp RPAREN .
+
+    PLUS            reduce using rule 22 (exp -> LPAREN exp RPAREN .)
+    MINUS           reduce using rule 22 (exp -> LPAREN exp RPAREN .)
+    TIMES           reduce using rule 22 (exp -> LPAREN exp RPAREN .)
+    DIVIDE          reduce using rule 22 (exp -> LPAREN exp RPAREN .)
+    LT              reduce using rule 22 (exp -> LPAREN exp RPAREN .)
+    LE              reduce using rule 22 (exp -> LPAREN exp RPAREN .)
+    EQUALS          reduce using rule 22 (exp -> LPAREN exp RPAREN .)
+    SEMI            reduce using rule 22 (exp -> LPAREN exp RPAREN .)
+    RPAREN          reduce using rule 22 (exp -> LPAREN exp RPAREN .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for PLUS in state 40 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 40 resolved as shift
+WARNING: shift/reduce conflict for TIMES in state 40 resolved as shift
+WARNING: shift/reduce conflict for DIVIDE in state 40 resolved as shift
+WARNING: shift/reduce conflict for LT in state 40 resolved as shift
+WARNING: shift/reduce conflict for LE in state 40 resolved as shift
+WARNING: shift/reduce conflict for EQUALS in state 40 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 41 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 41 resolved as shift
+WARNING: shift/reduce conflict for TIMES in state 41 resolved as shift
+WARNING: shift/reduce conflict for DIVIDE in state 41 resolved as shift
+WARNING: shift/reduce conflict for LT in state 41 resolved as shift
+WARNING: shift/reduce conflict for LE in state 41 resolved as shift
+WARNING: shift/reduce conflict for EQUALS in state 41 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 47 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 47 resolved as shift
+WARNING: shift/reduce conflict for TIMES in state 47 resolved as shift
+WARNING: shift/reduce conflict for DIVIDE in state 47 resolved as shift
+WARNING: shift/reduce conflict for LT in state 47 resolved as shift
+WARNING: shift/reduce conflict for LE in state 47 resolved as shift
+WARNING: shift/reduce conflict for EQUALS in state 47 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 48 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 48 resolved as shift
+WARNING: shift/reduce conflict for TIMES in state 48 resolved as shift
+WARNING: shift/reduce conflict for DIVIDE in state 48 resolved as shift
+WARNING: shift/reduce conflict for LT in state 48 resolved as shift
+WARNING: shift/reduce conflict for LE in state 48 resolved as shift
+WARNING: shift/reduce conflict for EQUALS in state 48 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 49 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 49 resolved as shift
+WARNING: shift/reduce conflict for TIMES in state 49 resolved as shift
+WARNING: shift/reduce conflict for DIVIDE in state 49 resolved as shift
+WARNING: shift/reduce conflict for LT in state 49 resolved as shift
+WARNING: shift/reduce conflict for LE in state 49 resolved as shift
+WARNING: shift/reduce conflict for EQUALS in state 49 resolved as shift

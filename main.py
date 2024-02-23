@@ -19,6 +19,8 @@ pa2_tokens = []
 
 while tokens_lines != []:
     line_number = get_token_line()
+    if tokens_lines == []:
+        break
     token_type = get_token_line()
     token_lexeme = token_type
     if token_type in ['identifier', 'integer', 'type']:
@@ -110,7 +112,11 @@ def p_classlist_some(p):
 
 def p_class_noinherit(p):
     'class : CLASS type LBRACE featurelist RBRACE'
-    p[0] = (p.lineno(1), 'class_noinherit', p[2], p[4])
+    p[0] = (p.lineno(1), 'no_inherits', p[2], p[4])
+
+def p_class_inherit(p):
+    'class : CLASS type INHERITS type LBRACE featurelist RBRACE'
+    p[0] = (p.lineno(1), 'inherits', p[2], p[4], p[6])
 
 def p_type(p):
     'type : TYPE'
@@ -135,6 +141,10 @@ def p_feature_attributenoinit(p):
 def p_feature_attributeinit(p):
     'feature : identifier COLON type LARROW exp'
     p[0] = (p.lineno(1), 'attribute_init', p[1], p[3], p[5])
+
+def p_exp_idparen_none(p):
+    'exp : identifier LPAREN RPAREN'
+    p[0] = []
 
 def p_exp_plus(p):
     'exp : exp PLUS exp'
