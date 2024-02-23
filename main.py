@@ -4,13 +4,14 @@ from lex import LexToken
 import yacc as yacc
 
 tokens_filename = sys.argv[1]
-tokens_filehandle = open(tokens_filename, 'r')
+tokens_filehandle = open(tokens_filename, 'r', newline='')
 tokens_lines = tokens_filehandle.readlines()
 tokens_filehandle.close()
 
 def get_token_line():
     global tokens_lines
     result = tokens_lines[0].strip()
+    print(result)
     tokens_lines = tokens_lines[1:]
     return result
 
@@ -19,11 +20,10 @@ pa2_tokens = []
 while tokens_lines != []:
     line_number = get_token_line()
     token_type = get_token_line()
+    token_lexeme = token_type
     if token_type in ['identifier', 'integer', 'type']:
-        token_value = get_token_line()
-        pa2_tokens.append((line_number, token_type.upper(), token_value))
-    else:
-        pa2_tokens.append((line_number, token_type.upper(), token_type))
+        token_lexeme = get_token_line()
+    pa2_tokens = pa2_tokens + [(line_number, token_type.upper(), token_lexeme)]
 
  
 class PA2Lexer(object):
@@ -92,9 +92,8 @@ tokens = (
     'NEWLINE'
 )
 
-precedence = ( ('left', 'PLUS'),
-              ('left', 'MINUS'),
-              ('left', 'TIMES')  #binds more tightly
+precedence = ( ('left', 'PLUS', 'MINUS'),
+              ('left', 'TIMES', 'DIVIDE')  #binds more tightly
               )
 
 def p_program_classlist(p):
@@ -141,13 +140,41 @@ def p_exp_plus(p):
     'exp : exp PLUS exp'
     p[0] = ((p[1])[0], 'plus' , p[1], p[3]) 
 
-def p_exp_miuns(p):
+def p_exp_minus(p):
     'exp : exp MINUS exp'
     p[0] = ((p[1])[0], 'minus' , p[1], p[3]) 
 
 def p_exp_times(p):
     'exp : exp TIMES exp'
-    p[0] = ((p[1])[0], 'times' , p[1], p[3]) 
+    p[0] = ((p[1])[0], 'times' , p[1], p[3])
+
+def p_exp_divide(p):
+    'exp : exp DIVIDE exp'
+    p[0] = ((p[1])[0], 'divide' , p[1], p[3])
+
+def p_exp_tilde(p):
+    'exp : TILDE exp'
+    p[0] = (p.lineno(1), 'tilde', p[2])
+
+def p_exp_lt(p):
+    'exp : exp LT exp'
+    p[0] = ((p[1])[0], 'lt', p[1], p[3])
+
+def p_exp_le(p):
+    'exp : exp LE exp'
+    p[0] = ((p[1])[0], 'le', p[1], p[3])
+
+def p_exp_equals(p):
+    'exp : exp EQUALS exp'
+    p[0] = ((p[1])[0], 'eq', p[1], p[3])
+
+def p_exp_not(p):
+    'exp : NOT exp'
+    p[0] = (p.lineno(1), 'not', p[2])
+
+def p_exp_paren(p): # very unsure of this one, not on the project output guidelines?
+    'exp : LPAREN exp RPAREN'
+    p[0] = (p.lineno(1), "paren", p[2]) 
 
 def p_exp_integer(p):
     'exp : INTEGER'
@@ -155,7 +182,7 @@ def p_exp_integer(p):
 
 def p_error(p):
     if p:
-         print("Error: ", p.lineno, ": Parser:  parse error near ", p.type)
+         print("ERROR: ", p.lineno, ": Parser:  parse error near ", p.type)
          # Just discard the token and tell the parser it's okay.
          exit(1)
     else:
