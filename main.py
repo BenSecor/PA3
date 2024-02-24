@@ -113,7 +113,7 @@ def p_class_noinherit(p):
 
 def p_class_inherit(p):
     'class : CLASS type INHERITS type LBRACE featurelist RBRACE'
-    p[0] = (p.lineno(1), 'inherits', p[1], p[2], p[4], p[6])
+    p[0] = (p.lineno(1), 'inherits', p[2], p[4], p[6])
 
 def p_type(p):
     'type : TYPE'
@@ -134,23 +134,23 @@ def p_featurelist_some(p):
 
 def p_feature_withlist(p):
     'feature : identifier LPAREN formal formals RPAREN COLON type LBRACE exp RBRACE'
-    p[0] = (p.lineno(1), 'method', p[1], p[3], p[4], p[7], p[9])
+    p[0] = (p.lineno(2), 'method', p[1], [p[3]]+p[4], p[7], p[9])
 
-def p_feature_withnoinit(p):
-    'feature : identifier LPAREN RPAREN COLON type LBRACE RBRACE'
-    p[0] = (p.lineno(1), 'method', p[1], p[5])
+# def p_feature_withnoinit(p):
+#     'feature : identifier LPAREN RPAREN COLON type LBRACE RBRACE'
+#     p[0] = (p.lineno(1), 'method', p[1], p[5])
 
 def p_feature_withinit(p):
     'feature : identifier LPAREN RPAREN COLON type LBRACE exp RBRACE'
-    p[0] = (p.lineno(1), 'method', p[1], p[5], p[7])
+    p[0] = (p.lineno(2), 'method', p[1], [], p[5], p[7])
 
 def p_feature_attributenoinit(p):
     'feature : identifier COLON type'
-    p[0] = (p.lineno(1), 'attribute_no_init', p[1], p[3])
+    p[0] = (p.lineno(2), 'attribute_no_init', p[1], p[3])
 
 def p_feature_attributeinit(p):
     'feature : identifier COLON type LARROW exp'
-    p[0] = (p.lineno(1), 'attribute_init', p[1], p[3], p[5])
+    p[0] = (p.lineno(2), 'attribute_init', p[1], p[3], p[5])
     
 
 def p_formals(p):
@@ -245,13 +245,20 @@ def p_exp_assign(p):
     'exp : identifier LARROW exp'
     p[0] = (p.lineno(1), 'assign', p[1], p[3])
 
+# def p_exp_call(p):
+#     'exp : identifier LPAREN RPAREN'
+#     p[0] = (p.lineno(1), 'assign', p[1])
+            
 def p_exp_self_dynamic_dispatch(p):
-    '''exp : identifier LPAREN exp_list RPAREN 
+    '''exp : exp identifier LPAREN exp_list RPAREN 
+            | identifier LPAREN exp_list RPAREN
             | identifier LPAREN RPAREN'''
-    if len(p) == 5:
-        p[0] = (p.lineno(1), 'dynamic/self_dispatch', p[1], p[3])
+    if len(p) == 6:
+        p[0] = (p.lineno(2), 'dynamic_dispatch', p[1], p[2], p[4])
+    elif len(p) == 4:
+        p[0] = (p.lineno(2), 'self_dispatch', p[1], [])
     else:
-        p[0] = (p.lineno(1), 'dynamic/self_dispatch', p[1])
+        p[0] = (p.lineno(2), 'self_dispatch', p[1], p[3])
 
 def p_exp_static_dispatch(p):
     '''exp : exp DOT identifier LPAREN exp_list RPAREN
@@ -354,7 +361,7 @@ fout = open(ast_filename, 'w')
 
 def print_identifier(ast):
     fout.write(str(ast[0]) + "\n")
-    fout.write(ast[1] + "\n")
+    fout.write(str(ast[1]) + "\n")
 
 def print_exp(ast):
     fout.write(str(ast[0]) + "\n")
@@ -366,8 +373,9 @@ def print_exp(ast):
     elif expression_type == 'dynamic_dispatch':
         fout.write("dynamic_dispatch\n")
         print_exp(ast[2])
-        fout.write("method:" + ast[3] + "\n")
-        fout.write("args:exp-list\n")
+        fout.write("method:")
+        print_identifier(ast[3])
+        fout.write("\nargs:")
         print_list(ast[4], print_exp)
     elif expression_type == 'static_dispatch':
         fout.write("static_dispatch\n")
@@ -378,8 +386,7 @@ def print_exp(ast):
         print_list(ast[5], print_exp)
     elif expression_type == 'self_dispatch':
         fout.write("self_dispatch\n")
-        fout.write("method:" + ast[2] + "\n")
-        fout.write("args:exp-list\n")
+        print_identifier(ast[2])
         print_list(ast[3], print_exp)
     elif expression_type == 'if':
         fout.write("if\n")
@@ -442,7 +449,7 @@ def print_exp(ast):
     else:
         print("Unhandled expression type:", expression_type)
 
-        
+
 def print_binding(ast):
     if len(ast) == 4:
         fout.write("let_binding_no_init\n")
@@ -475,20 +482,17 @@ def print_feature(ast):
         fout.write("init:exp\n")
         print_exp(ast[4])
     elif feature_type == 'method':
+        print(ast)
         fout.write("method\n")
         print_identifier(ast[2])
-        fout.write("formals-list\n")
         print_list(ast[3], print_formal)
         print_identifier(ast[4])
-        fout.write("body:exp\n")
         print_exp(ast[5])
     else:
         print("Unhandled feature type:", feature_type)
 
 def print_formal(ast):
-    print(ast)
-    print_identifier(ast[1])
-    print_identifier(ast[2])
+    print_identifier(ast)
 
 def print_list(ast, print_element_function):
     fout.write(str(len(ast))+ "\n") 
@@ -496,14 +500,15 @@ def print_list(ast, print_element_function):
         print_element_function(elem)
 
 def print_class(ast):
-    print_identifier(ast[3])
     if ast[1] == 'inherits':
+        print_identifier(ast[2])
+        print_identifier(ast[3])
         fout.write(ast[1]+"\n")
-        print_identifier(ast[4])
-        print_list(ast[5], print_feature)
-    else:
-        fout.write(ast[3]+"\n")
         print_list(ast[4], print_feature)
+    else:
+        print_identifier(ast[2])
+        fout.write(ast[1]+"\n")
+        print_list(ast[3], print_feature)
 
 def print_program(ast):
     print_list(ast, print_class)
