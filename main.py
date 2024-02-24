@@ -49,7 +49,6 @@ tokens = (
     'CLASS',
     'COLON',
     'COMMA',
-    'COMMENT',
     'DOT',
     'DIVIDE',
     'ELSE',
@@ -73,7 +72,6 @@ tokens = (
     'MINUS',
     'NEW',
     'NOT',
-    'NUMBER',
     'OF',
     'PLUS',
     'POOL',
@@ -88,7 +86,6 @@ tokens = (
     'TRUE',
     'TYPE',
     'WHILE', 
-    'NEWLINE'
 )
 
 precedence = ( ('left', 'PLUS', 'MINUS'),
@@ -133,12 +130,12 @@ def p_featurelist_some(p):
 
 
 def p_feature_withlist(p):
-    'feature : identifier LPAREN formal formals RPAREN COLON type LBRACE exp RBRACE'
-    p[0] = (p.lineno(2), 'method', p[1], [p[3]]+p[4], p[7], p[9])
+    'feature : identifier LPAREN  formals RPAREN COLON type LBRACE exp RBRACE'
+    p[0] = (p.lineno(2), 'method', p[1], p[3], p[6], p[8])
 
 # def p_feature_withnoinit(p):
 #     'feature : identifier LPAREN RPAREN COLON type LBRACE RBRACE'
-#     p[0] = (p.lineno(1), 'method', p[1], p[5])
+#     p[0] = (p.lineno(2), 'method', p[1], [], p[5])
 
 def p_feature_withinit(p):
     'feature : identifier LPAREN RPAREN COLON type LBRACE exp RBRACE'
@@ -154,11 +151,11 @@ def p_feature_attributeinit(p):
     
 
 def p_formals(p):
-    '''formals : COMMA formal
-                | COMMA formal formals
-                | '''
+    '''formals : formal
+                | formal COMMA formals
+                |'''
     if len(p) == 3:
-        p[0] = [p[2]]
+        p[0] = [p[1]]
     elif len(p) == 4:
         p[0] = [p[1]] + p[3]
     else:
@@ -168,14 +165,6 @@ def p_formals(p):
 def p_formal(p):
     'formal : identifier COLON type'
     p[0] = ('formal', p[1], p[3])
-
-def p_feature_attributeinit(p):
-    'feature : identifier COLON type LARROW exp'
-    p[0] = (p.lineno(1), 'attribute_init', p[1], p[3], p[5])
-
-def p_feature_attributenoinit(p):
-    'feature : identifier COLON type'
-    p[0] = (p.lineno(1), 'attribute_init', p[1], p[3])
 
 def p_exp_plus(p):
     'exp : exp PLUS exp'
