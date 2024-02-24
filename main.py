@@ -21,7 +21,7 @@ while tokens_lines != []:
     line_number = get_token_line()
     token_type = get_token_line()
     token_lexeme = token_type
-    if token_type in ['identifier', 'integer', 'type']:
+    if token_type in ['identifier', 'integer', 'type','string']:
         token_lexeme = get_token_line()
     pa2_tokens = pa2_tokens + [(line_number, token_type.upper(), token_lexeme)]
 
@@ -100,7 +100,7 @@ def p_program_classlist(p):
     'program : classlist'
     p[0] = p[1]
 
-def p_classlist_one(p):
+def p_classlist_none(p):
     'classlist : '
     p[0] = []
 
@@ -120,9 +120,13 @@ def p_type(p):
     'type : TYPE'
     p[0] = (p.lineno(1), p[1])
 
-def p_featurelist_one(p):
-    'featurelist : feature'
-    p[0] = p[1]
+def p_identifier(p):
+    'identifier : IDENTIFIER'
+    p[0] = (p.lineno(1), p[1])
+
+def p_featurelist_none(p):
+    'featurelist : '
+    p[0] = []
 
 def p_featurelist_some(p):
     'featurelist : feature SEMI featurelist'
@@ -130,36 +134,35 @@ def p_featurelist_some(p):
 
 
 def p_feature_withlist(p):
-    'feature : IDENTIFIER LPAREN formal_parameters RPAREN COLON type LBRACE exp RBRACE'
-    p[0] = (p.lineno(1), 'attribute_no_init', p[1], p[3], p[4])
+    'feature : identifier LPAREN formal formals RPAREN COLON type LBRACE exp RBRACE'
+    p[0] = (p.lineno(1), 'attribute_no_init', p[1], p[3], p[4], p[7], p[9])
 
+def p_feature_withoutlist(p):
+    'feature : identifier LPAREN RPAREN COLON type LBRACE exp RBRACE'
+    p[0] = (p.lineno(1), 'attribute_no_init', p[1], p[5], p[7])
 
-def p_formal_parameters(p):
-    '''formal_parameters : formal_parameter
-                         | formal_parameter SEMI formal_parameters
-                         | '''
-    if len(p) == 2:
-        p[0] = [p[1]]
+def p_formals(p):
+    '''formals : COMMA formal
+                | COMMA formal formals
+                | '''
+    if len(p) == 3:
+        p[0] = [p[2]]
     elif len(p) == 4:
         p[0] = [p[1]] + p[3]
     else:
         p[0] = []
 
 
-def p_formal_parameter(p):
-    'formal_parameter : IDENTIFIER COLON type'
-    p[0] = ('formal_parameter', p[1], p[3])
-
-def p_formal_parameter_fail(p):
-    '''formal_parameter : '''
-    p[0]=["FAIL"]
+def p_formal(p):
+    'formal : identifier COLON type'
+    p[0] = ('formal', p[1], p[3])
 
 def p_feature_attributeinit(p):
-    'feature : IDENTIFIER COLON type LARROW exp'
+    'feature : identifier COLON type LARROW exp'
     p[0] = (p.lineno(1), 'attribute_init', p[1], p[3], p[5])
 
 def p_feature_attributenoinit(p):
-    'feature : IDENTIFIER COLON type'
+    'feature : identifier COLON type'
     p[0] = (p.lineno(1), 'attribute_init', p[1], p[3])
 
 def p_exp_plus(p):
@@ -206,6 +209,17 @@ def p_exp_integer(p):
     'exp : INTEGER'
     p[0] = (p.lineno(1), 'integer', p[1])
 
+def p_exp_string(p):
+    'exp : STRING'
+    p[0] = (p.lineno(1), 'string', p[1])
+
+def p_exp_true(p):
+    'exp : TRUE'
+    p[0] = (p.lineno(1), 'TRUE', p[1])
+
+def p_exp_false(p):
+    'exp : FALSE'
+    p[0] = (p.lineno(1), 'FALSE', p[1])
 
 def p_exp_isvoid(p):
     'exp : ISVOID exp'
@@ -216,19 +230,23 @@ def p_exp_new(p):
     p[0] = (p.lineno(1), 'new', p[2])
 
 def p_exp_assign(p):
-    'exp : IDENTIFIER LARROW exp'
+    'exp : identifier LARROW exp'
     p[0] = (p.lineno(2), 'assign', p[1], p[3])
 
+#look into this
 def p_expr_dispatch(p):
-    '''exp : IDENTIFIER LPAREN exp_list RPAREN 
-            | exp DOT IDENTIFIER LPAREN exp_list RPAREN
-            | exp DOT IDENTIFIER LPAREN RPAREN'''
+    '''exp : identifier LPAREN exp_list RPAREN 
+            | identifier LPAREN RPAREN 
+            | exp DOT identifier LPAREN exp_list RPAREN
+            | exp DOT identifier LPAREN RPAREN'''
     if len(p) == 6:
         p[0] = (p.lineno(1), 'dynamic_dispatch', p[1], p[3], p[5])
     elif len(p) == 5:
         p[0] = (p.lineno(1), 'dynamic_dispatch', p[1], None, p[4])
     elif len(p) == 8:
         p[0] = (p.lineno(1), 'static_dispatch', p[1], p[3], p[5], p[7])
+    elif len(p) == 4:
+        p[0] = (p.lineno(1), 'static_dispatch', p[1])
     else:
         p[0] = (p.lineno(1), 'static_dispatch', p[1], p[3], None, p[6])
 
@@ -249,8 +267,8 @@ def p_exp_let(p):
     p[0] = (p.lineno(1), 'let', p[2], p[4])
 
 def p_let_list_one(p):
-    '''let_list : IDENTIFIER COLON TYPE
-                | IDENTIFIER COLON TYPE LARROW exp '''
+    '''let_list : identifier COLON TYPE
+                | identifier COLON TYPE LARROW exp '''
     if len(p) == 4:
         p[0] = [(p.lineno(1), 'let_binding_no_init', p[1], p[3])]
     elif len(p) == 6:
@@ -267,8 +285,8 @@ def p_exp_case(p):
     p[0] = (p.lineno(1), 'case', p[2], p[4])
 
 def p_case_list(p):
-    '''case_list : IDENTIFIER COLON TYPE LARROW exp
-                 | IDENTIFIER COLON TYPE LARROW exp SEMI case_list'''
+    '''case_list : identifier COLON TYPE RARROW exp
+                 | identifier COLON TYPE RARROW exp SEMI case_list'''
     if len(p) == 6:
         p[0] = [(p.lineno(1), p[1], p[3], p[5])]
     else:
@@ -280,30 +298,30 @@ def p_case_list_one(p):
 
 
 def p_exp_dispatch_static(p):
-    'exp : exp AT TYPE DOT IDENTIFIER LPAREN exp_list RPAREN'
+    'exp : exp AT TYPE DOT identifier LPAREN exp_list RPAREN'
     p[0] = (p.lineno(2), 'static_dispatch', p[1], p[3], p[5], p[7])
 
 def p_exp_list_empty(p):
-    'exp_list : '
-    p[0] = []
+    'exp_list : exp'
+    p[0] = [p[1]]
 
 def p_exp_list_multiple(p):
-    'exp_list : exp SEMI exp_list'
-    p[0] = p[1] + [p[3]]
+    'exp_list : exp COMMA exp_list'
+    p[0] = [p[1]] + p[3]
 
 
-def p_exp_list_semi_empty(p):
-    'exp_list_semi : '
-    p[0] = []
+def p_exp_list_semi_one(p):
+    'exp_list_semi : exp SEMI'
+    p[0] = [p[1]]
 
 def p_exp_list_semi_multiple(p):
-    'exp_list_semi : exp SEMI SEMI exp_list_semi'
-    p[0] = p[1] + [p[3]]
+    'exp_list_semi : exp SEMI exp_list_semi'
+    p[0] = [p[1]] + p[3]
 
 
 def p_exp_id(p):
-    'exp : IDENTIFIER'
-    p[0] = p[1]
+    'exp : identifier'
+    p[0] = (p.lineno(1), p[1], p[1])
 
 
 def p_error(p):
@@ -405,7 +423,7 @@ def print_exp(ast, line_number=0):
         exit(1)
 
 def print_feature(ast):
-    if ast[1]== 'attribute_no_init':
+    if ast[1] == 'attribute_no_init':
         fout.write("attribute_no_init\n")
         print_identifier(ast[2])
         print_identifier(ast[3])
