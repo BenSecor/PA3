@@ -11,7 +11,6 @@ tokens_filehandle.close()
 def get_token_line():
     global tokens_lines
     result = tokens_lines[0].strip()
-    print(result)
     tokens_lines = tokens_lines[1:]
     return result
 
@@ -114,7 +113,7 @@ def p_class_noinherit(p):
 
 def p_class_inherit(p):
     'class : CLASS type INHERITS type LBRACE featurelist RBRACE'
-    p[0] = (p.lineno(1), 'inherits', p[2], p[4], p[6])
+    p[0] = (p.lineno(1), 'inherits', p[1], p[2], p[4], p[6])
 
 def p_type(p):
     'type : TYPE'
@@ -135,11 +134,24 @@ def p_featurelist_some(p):
 
 def p_feature_withlist(p):
     'feature : identifier LPAREN formal formals RPAREN COLON type LBRACE exp RBRACE'
-    p[0] = (p.lineno(1), 'attribute_no_init', p[1], p[3], p[4], p[7], p[9])
+    p[0] = (p.lineno(1), 'method', p[1], p[3], p[4], p[7], p[9])
 
-def p_feature_withoutlist(p):
+def p_feature_withnoinit(p):
+    'feature : identifier LPAREN RPAREN COLON type LBRACE RBRACE'
+    p[0] = (p.lineno(1), 'method', p[1], p[5])
+
+def p_feature_withinit(p):
     'feature : identifier LPAREN RPAREN COLON type LBRACE exp RBRACE'
-    p[0] = (p.lineno(1), 'attribute_no_init', p[1], p[5], p[7])
+    p[0] = (p.lineno(1), 'method', p[1], p[5], p[7])
+
+def p_feature_attributenoinit(p):
+    'feature : identifier COLON type'
+    p[0] = (p.lineno(1), 'attribute_no_init', p[1], p[3])
+
+def p_feature_attributeinit(p):
+    'feature : identifier COLON type LARROW exp'
+    p[0] = (p.lineno(1), 'attribute_init', p[1], p[3], p[5])
+    
 
 def p_formals(p):
     '''formals : COMMA formal
@@ -231,24 +243,23 @@ def p_exp_new(p):
 
 def p_exp_assign(p):
     'exp : identifier LARROW exp'
-    p[0] = (p.lineno(2), 'assign', p[1], p[3])
+    p[0] = (p.lineno(1), 'assign', p[1], p[3])
 
-#look into this
-def p_expr_dispatch(p):
+def p_exp_self_dynamic_dispatch(p):
     '''exp : identifier LPAREN exp_list RPAREN 
-            | identifier LPAREN RPAREN 
-            | exp DOT identifier LPAREN exp_list RPAREN
-            | exp DOT identifier LPAREN RPAREN'''
-    if len(p) == 6:
-        p[0] = (p.lineno(1), 'dynamic_dispatch', p[1], p[3], p[5])
-    elif len(p) == 5:
-        p[0] = (p.lineno(1), 'dynamic_dispatch', p[1], None, p[4])
-    elif len(p) == 8:
-        p[0] = (p.lineno(1), 'static_dispatch', p[1], p[3], p[5], p[7])
-    elif len(p) == 4:
-        p[0] = (p.lineno(1), 'static_dispatch', p[1])
+            | identifier LPAREN RPAREN'''
+    if len(p) == 5:
+        p[0] = (p.lineno(1), 'dynamic/self_dispatch', p[1], p[3])
     else:
-        p[0] = (p.lineno(1), 'static_dispatch', p[1], p[3], None, p[6])
+        p[0] = (p.lineno(1), 'dynamic/self_dispatch', p[1])
+
+def p_exp_static_dispatch(p):
+    '''exp : exp DOT identifier LPAREN exp_list RPAREN
+            | exp DOT identifier LPAREN RPAREN'''
+    if len(p) == 7:
+        p[0] = (p.lineno(1),'static_dispatch', p[1], p[3], p[5])
+    else:
+        p[0] = (p.lineno(1),'static_dispatch', p[1], p[3])
 
 def p_exp_if(p):
     'exp : IF exp THEN exp ELSE exp FI'
@@ -338,8 +349,6 @@ def p_error(p):
 parser = yacc.yacc()
 ast = yacc.parse(lexer=pa2lexer)
 
-print(ast)
-
 ast_filename = (sys.argv[1])[:-4]+ "-ast"
 fout = open(ast_filename, 'w')
 
@@ -347,94 +356,139 @@ def print_identifier(ast):
     fout.write(str(ast[0]) + "\n")
     fout.write(ast[1] + "\n")
 
-def print_exp(ast, line_number=0):
-    fout.write(str(line_number) + "\n")
-    expression_type = ast[0]
+def print_exp(ast):
+    fout.write(str(ast[0]) + "\n")
+    expression_type = ast[1]
     if expression_type == 'assign':
         fout.write("assign\n")
-        fout.write("var:" + ast[1] + "\n")
-        print_exp(ast[2])
+        fout.write("var:" + ast[2] + "\n")
+        print_exp(ast[3])
     elif expression_type == 'dynamic_dispatch':
         fout.write("dynamic_dispatch\n")
-        print_exp(ast[1])
-        fout.write("method:" + ast[2] + "\n")
-        print_exp(ast[3])
+        print_exp(ast[2])
+        fout.write("method:" + ast[3] + "\n")
+        fout.write("args:exp-list\n")
+        print_list(ast[4], print_exp)
     elif expression_type == 'static_dispatch':
         fout.write("static_dispatch\n")
-        print_exp(ast[1])
-        fout.write("type:" + ast[2] + "\n")
-        fout.write("method:" + ast[3] + "\n")
-        print_exp(ast[4])
+        print_exp(ast[2])
+        fout.write("type:" + ast[3] + "\n")
+        fout.write("method:" + ast[4] + "\n")
+        fout.write("args:exp-list\n")
+        print_list(ast[5], print_exp)
     elif expression_type == 'self_dispatch':
         fout.write("self_dispatch\n")
-        fout.write("method:" + ast[1] + "\n")
-        print_exp(ast[2])
+        fout.write("method:" + ast[2] + "\n")
+        fout.write("args:exp-list\n")
+        print_list(ast[3], print_exp)
     elif expression_type == 'if':
         fout.write("if\n")
-        print_exp(ast[1])
+        fout.write("predicate:exp\n")
         print_exp(ast[2])
+        fout.write("then:exp\n")
         print_exp(ast[3])
+        fout.write("else:exp\n")
+        print_exp(ast[4])
     elif expression_type == 'while':
         fout.write("while\n")
-        print_exp(ast[1])
+        fout.write("predicate:exp\n")
         print_exp(ast[2])
+        fout.write("body:exp\n")
+        print_exp(ast[3])
     elif expression_type == 'block':
         fout.write("block\n")
-        for exp in ast[1:]:
-            print_exp(exp)
+        fout.write("body:exp-list\n")
+        print_list(ast[2], print_exp)
     elif expression_type == 'new':
         fout.write("new\n")
-        fout.write("class:" + ast[1] + "\n")
+        fout.write("class:" + ast[2] + "\n")
     elif expression_type == 'isvoid':
         fout.write("isvoid\n")
-        print_exp(ast[1])
+        fout.write("e:exp\n")
+        print_exp(ast[2])
     elif expression_type in ['plus', 'minus', 'times', 'divide', 'lt', 'le', 'eq']:
         fout.write(expression_type + "\n")
-        print_exp(ast[1])
+        fout.write("x:exp\n")
         print_exp(ast[2])
-    elif expression_type in ['not', 'negate', 'integer', 'string', 'identifier', 'true', 'false']:
-        print(str(ast[0]) + "\n"+ ast[1] + "\n")
+        fout.write("y:exp\n")
+        print_exp(ast[3])
+    elif expression_type in ['not', 'negate']:
         fout.write(expression_type + "\n")
-        if len(ast) > 1:
-            fout.write(ast[1] + "\n")
+        fout.write("x:exp\n")
+        print_exp(ast[2])
+    elif expression_type == 'integer':
+        fout.write("integer\n")
+        fout.write(str(ast[2]) + "\n")
+    elif expression_type == 'string':
+        fout.write("string\n")
+        fout.write(ast[2] + "\n")
+    elif expression_type == 'identifier':
+        fout.write("identifier\n")
+        fout.write("variable:" + ast[2] + "\n")
+    elif expression_type in ['true', 'false']:
+        fout.write(expression_type + "\n")
     elif expression_type == 'let':
         fout.write("let\n")
-        for binding in ast[1]:
-            if len(binding) == 2:
-                fout.write("let_binding_no_init\n")
-                fout.write("variable:" + binding[0] + "\n")
-                fout.write("type:" + binding[1] + "\n")
-            elif len(binding) == 3:
-                fout.write("let_binding_init\n")
-                fout.write("variable:" + binding[0] + "\n")
-                fout.write("type:" + binding[1] + "\n")
-                print_exp(binding[2])
-        print_exp(ast[2])
+        fout.write("let-binding-list\n")
+        print_list(ast[2], print_binding)
+        fout.write("body:exp\n")
+        print_exp(ast[3])
     elif expression_type == 'case':
         fout.write("case\n")
-        print_exp(ast[1])
-        for case_element in ast[2:]:
-            fout.write("case-element\n")
-            fout.write("variable:" + case_element[0] + "\n")
-            fout.write("type:" + case_element[1] + "\n")
-            print_exp(case_element[2])
+        fout.write("case-expression:exp\n")
+        print_exp(ast[2])
+        fout.write("case-elements-list\n")
+        print_list(ast[3], print_case_element)
     else:
-        print("unhandled expression" + expression_type)
-        exit(1)
+        print("Unhandled expression type:", expression_type)
+
+        
+def print_binding(ast):
+    if len(ast) == 4:
+        fout.write("let_binding_no_init\n")
+        print_identifier(ast[1])
+        print_identifier(ast[2])
+    elif len(ast) == 5:
+        fout.write("let_binding_init\n")
+        print_identifier(ast[1])
+        print_identifier(ast[2])
+        fout.write("value:exp\n")
+        print_exp(ast[3])
+
+def print_case_element(ast):
+    fout.write("case-element\n")
+    print_identifier(ast[1])
+    print_identifier(ast[2])
+    fout.write("case-element-body:exp\n")
+    print_exp(ast[3])
 
 def print_feature(ast):
-    if ast[1] == 'attribute_no_init':
+    feature_type = ast[1]
+    if feature_type == 'attribute_no_init':
         fout.write("attribute_no_init\n")
         print_identifier(ast[2])
         print_identifier(ast[3])
-    elif ast[1]== 'attribute_init':
+    elif feature_type == 'attribute_init':
         fout.write("attribute_init\n")
         print_identifier(ast[2])
         print_identifier(ast[3])
+        fout.write("init:exp\n")
         print_exp(ast[4])
-    else :
-        print("unhandled expression" + ast[1])
-        exit(1)
+    elif feature_type == 'method':
+        fout.write("method\n")
+        print_identifier(ast[2])
+        fout.write("formals-list\n")
+        print_list(ast[3], print_formal)
+        print_identifier(ast[4])
+        fout.write("body:exp\n")
+        print_exp(ast[5])
+    else:
+        print("Unhandled feature type:", feature_type)
+
+def print_formal(ast):
+    print(ast)
+    print_identifier(ast[1])
+    print_identifier(ast[2])
 
 def print_list(ast, print_element_function):
     fout.write(str(len(ast))+ "\n") 
@@ -442,9 +496,14 @@ def print_list(ast, print_element_function):
         print_element_function(elem)
 
 def print_class(ast):
-    print_identifier(ast[2])
-    fout.write("no_inherits\n")
-    print_list(ast[3], print_feature)
+    print_identifier(ast[3])
+    if ast[1] == 'inherits':
+        fout.write(ast[1]+"\n")
+        print_identifier(ast[4])
+        print_list(ast[5], print_feature)
+    else:
+        fout.write(ast[3]+"\n")
+        print_list(ast[4], print_feature)
 
 def print_program(ast):
     print_list(ast, print_class)
