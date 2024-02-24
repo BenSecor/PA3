@@ -502,8 +502,8 @@ def print_list(ast, print_element_function):
 def print_class(ast):
     if ast[1] == 'inherits':
         print_identifier(ast[2])
-        print_identifier(ast[3])
         fout.write(ast[1]+"\n")
+        print_identifier(ast[3])
         print_list(ast[4], print_feature)
     else:
         print_identifier(ast[2])
