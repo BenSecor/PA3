@@ -89,7 +89,10 @@ tokens = (
 )
 
 precedence = ( ('left', 'PLUS', 'MINUS'),
-              ('left', 'TIMES', 'DIVIDE')  #binds more tightly
+              ('left', 'TIMES', 'DIVIDE'),  #binds more tightly
+              ('nonassoc', 'EQUALS'),
+              ('nonassoc', 'LT'),
+              ('nonassoc', 'LE')
               )
 
 def p_program_classlist(p):
@@ -251,7 +254,7 @@ def p_exp_static_dispatch(p):
     if len(p) == 5:
         p[0] = (p.lineno(2), 'static_dispatch', p[1], p[2] , [])
     else:
-        p[0] = (p.lineno(2), 'static_dispatch', p[1], p[2], p[3])
+        p[0] = (p.lineno(2), 'static_dispatch', p[1], p[2], p[4])
 
 def p_exp_dynamic_dispatch(p):
     '''exp : exp DOT identifier LPAREN exp_list RPAREN
@@ -301,16 +304,13 @@ def p_exp_case(p):
     p[0] = (p.lineno(1), 'case', p[2], p[4])
 
 def p_case_list(p):
-    '''case_list : identifier COLON type RARROW exp
+    '''case_list : identifier COLON type RARROW exp SEMI
                  | identifier COLON type RARROW exp SEMI case_list'''
-    if len(p) == 6:
+    if len(p) == 7:
         p[0] = [(p.lineno(1), p[1], p[3], p[5])]
     else:
         p[0] = [(p.lineno(1), p[1], p[3], p[5])] + p[7]
 
-def p_case_list_one(p):
-    '''case_list : '''
-    p[0] = []
 
 
 def p_exp_dispatch_static(p):
