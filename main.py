@@ -130,7 +130,7 @@ def p_featurelist_some(p):
 
 
 def p_feature_withlist(p):
-    'feature : identifier LPAREN  formals RPAREN COLON type LBRACE exp RBRACE'
+    'feature : identifier LPAREN formals RPAREN COLON type LBRACE exp RBRACE'
     p[0] = (p.lineno(2), 'method', p[1], p[3], p[6], p[8])
 
 # def p_feature_withnoinit(p):
@@ -154,7 +154,7 @@ def p_formals(p):
     '''formals : formal
                 | formal COMMA formals
                 |'''
-    if len(p) == 3:
+    if len(p) == 2:
         p[0] = [p[1]]
     elif len(p) == 4:
         p[0] = [p[1]] + p[3]
@@ -164,7 +164,7 @@ def p_formals(p):
 
 def p_formal(p):
     'formal : identifier COLON type'
-    p[0] = ('formal', p[1], p[3])
+    p[0] = (p.lineno(2), 'formal', p[1], p[3])
 
 def p_exp_plus(p):
     'exp : exp PLUS exp'
@@ -204,7 +204,7 @@ def p_exp_not(p):
 
 def p_exp_paren(p): # very unsure of this one, not on the project output guidelines?
     'exp : LPAREN exp RPAREN'
-    p[0] = (p.lineno(1), "paren", p[2]) 
+    p[0] = p[2]
 
 def p_exp_integer(p):
     'exp : INTEGER'
@@ -232,30 +232,35 @@ def p_exp_new(p):
 
 def p_exp_assign(p):
     'exp : identifier LARROW exp'
-    p[0] = (p.lineno(1), 'assign', p[1], p[3])
+    p[0] = (p.lineno(2), 'assign', p[1], p[3])
 
 # def p_exp_call(p):
 #     'exp : identifier LPAREN RPAREN'
 #     p[0] = (p.lineno(1), 'assign', p[1])
             
-def p_exp_self_dynamic_dispatch(p):
-    '''exp : exp identifier LPAREN exp_list RPAREN 
-            | identifier LPAREN exp_list RPAREN
-            | identifier LPAREN RPAREN'''
-    if len(p) == 6:
-        p[0] = (p.lineno(2), 'dynamic_dispatch', p[1], p[2], p[4])
-    elif len(p) == 4:
+def p_exp_self_dispatch(p):
+    '''exp : identifier LPAREN exp_list RPAREN
+           | identifier LPAREN RPAREN'''
+    if len(p) == 4:
         p[0] = (p.lineno(2), 'self_dispatch', p[1], [])
     else:
         p[0] = (p.lineno(2), 'self_dispatch', p[1], p[3])
-
 def p_exp_static_dispatch(p):
-    '''exp : exp DOT identifier LPAREN exp_list RPAREN
-            | exp DOT identifier LPAREN RPAREN'''
-    if len(p) == 7:
-        p[0] = (p.lineno(1),'static_dispatch', p[1], p[3], p[5])
+    '''exp : exp identifier LPAREN exp_list RPAREN
+            | exp identifier LPAREN RPAREN'''
+    if len(p) == 5:
+        p[0] = (p.lineno(2), 'static_dispatch', p[1], p[2] , [])
     else:
-        p[0] = (p.lineno(1),'static_dispatch', p[1], p[3])
+        p[0] = (p.lineno(2), 'static_dispatch', p[1], p[2], p[3])
+
+def p_exp_dynamic_dispatch(p):
+    '''exp : exp DOT identifier LPAREN exp_list RPAREN
+            | exp DOT identifier LPAREN RPAREN
+            '''
+    if len(p) == 7:
+        p[0] = (p.lineno(2),'dynamic_dispatch', p[1], p[3], p[5])
+    else:
+        p[0] = (p.lineno(2),'dynamic_dispatch', p[1], p[3], [])
 
 def p_exp_if(p):
     'exp : IF exp THEN exp ELSE exp FI'
@@ -274,26 +279,30 @@ def p_exp_let(p):
     p[0] = (p.lineno(1), 'let', p[2], p[4])
 
 def p_let_list_one(p):
-    '''let_list : identifier COLON TYPE
-                | identifier COLON TYPE LARROW exp '''
+    '''let_list : identifier COLON type 
+                | identifier COLON type LARROW exp'''
     if len(p) == 4:
         p[0] = [(p.lineno(1), 'let_binding_no_init', p[1], p[3])]
     elif len(p) == 6:
         p[0] = [(p.lineno(1), 'let_binding_init', p[1], p[3], p[5])]
     else:
-        p[0] = [(p.lineno(1), 'let_binding_no_init', p[1], p[3])] + p[5]
+        p[0] = []
 
 def p_let_list(p):
-    '''let_list : '''
-    p[0] = []
+    '''let_list : identifier COLON type COMMA let_list
+                | identifier COLON type LARROW exp COMMA let_list'''
+    if len(p) == 6:
+        p[0] = [(p.lineno(1), 'let_binding_no_init', p[1], p[3])] + p[5]
+    elif len(p) == 8:
+        p[0] = [(p.lineno(1), 'let_binding_init', p[1], p[3], p[5])] + p[7]
 
 def p_exp_case(p):
     'exp : CASE exp OF case_list ESAC'
     p[0] = (p.lineno(1), 'case', p[2], p[4])
 
 def p_case_list(p):
-    '''case_list : identifier COLON TYPE RARROW exp
-                 | identifier COLON TYPE RARROW exp SEMI case_list'''
+    '''case_list : identifier COLON type RARROW exp
+                 | identifier COLON type RARROW exp SEMI case_list'''
     if len(p) == 6:
         p[0] = [(p.lineno(1), p[1], p[3], p[5])]
     else:
@@ -305,7 +314,7 @@ def p_case_list_one(p):
 
 
 def p_exp_dispatch_static(p):
-    'exp : exp AT TYPE DOT identifier LPAREN exp_list RPAREN'
+    'exp : exp AT type DOT identifier LPAREN exp_list RPAREN'
     p[0] = (p.lineno(2), 'static_dispatch', p[1], p[3], p[5], p[7])
 
 def p_exp_list_empty(p):
@@ -328,7 +337,7 @@ def p_exp_list_semi_multiple(p):
 
 def p_exp_id(p):
     'exp : identifier'
-    p[0] = (p.lineno(1), p[1], p[1])
+    p[0] = (p[1][0], 'identifier', p[1])
 
 
 def p_error(p):
@@ -350,28 +359,25 @@ fout = open(ast_filename, 'w')
 
 def print_identifier(ast):
     fout.write(str(ast[0]) + "\n")
-    fout.write(str(ast[1]) + "\n")
+    fout.write(ast[1] + "\n")
 
 def print_exp(ast):
     fout.write(str(ast[0]) + "\n")
     expression_type = ast[1]
     if expression_type == 'assign':
         fout.write("assign\n")
-        fout.write("var:" + ast[2] + "\n")
+        print_identifier(ast[2])
         print_exp(ast[3])
     elif expression_type == 'dynamic_dispatch':
         fout.write("dynamic_dispatch\n")
         print_exp(ast[2])
-        fout.write("method:")
         print_identifier(ast[3])
-        fout.write("\nargs:")
         print_list(ast[4], print_exp)
     elif expression_type == 'static_dispatch':
         fout.write("static_dispatch\n")
         print_exp(ast[2])
-        fout.write("type:" + ast[3] + "\n")
-        fout.write("method:" + ast[4] + "\n")
-        fout.write("args:exp-list\n")
+        print_identifier(ast[3])
+        print_identifier(ast[4])
         print_list(ast[5], print_exp)
     elif expression_type == 'self_dispatch':
         fout.write("self_dispatch\n")
@@ -379,38 +385,33 @@ def print_exp(ast):
         print_list(ast[3], print_exp)
     elif expression_type == 'if':
         fout.write("if\n")
-        fout.write("predicate:exp\n")
+        # fout.write("predicate:exp\n")
         print_exp(ast[2])
-        fout.write("then:exp\n")
+        # fout.write("then:exp\n")
         print_exp(ast[3])
-        fout.write("else:exp\n")
+        # fout.write("else:exp\n")
         print_exp(ast[4])
     elif expression_type == 'while':
         fout.write("while\n")
-        fout.write("predicate:exp\n")
+        # fout.write("predicate:exp\n")
         print_exp(ast[2])
-        fout.write("body:exp\n")
         print_exp(ast[3])
     elif expression_type == 'block':
         fout.write("block\n")
-        fout.write("body:exp-list\n")
         print_list(ast[2], print_exp)
     elif expression_type == 'new':
         fout.write("new\n")
-        fout.write("class:" + ast[2] + "\n")
+        print_identifier(ast[2])
     elif expression_type == 'isvoid':
         fout.write("isvoid\n")
-        fout.write("e:exp\n")
+        # fout.write("e:exp\n")
         print_exp(ast[2])
     elif expression_type in ['plus', 'minus', 'times', 'divide', 'lt', 'le', 'eq']:
         fout.write(expression_type + "\n")
-        fout.write("x:exp\n")
         print_exp(ast[2])
-        fout.write("y:exp\n")
         print_exp(ast[3])
     elif expression_type in ['not', 'negate']:
         fout.write(expression_type + "\n")
-        fout.write("x:exp\n")
         print_exp(ast[2])
     elif expression_type == 'integer':
         fout.write("integer\n")
@@ -420,42 +421,43 @@ def print_exp(ast):
         fout.write(ast[2] + "\n")
     elif expression_type == 'identifier':
         fout.write("identifier\n")
-        fout.write("variable:" + ast[2] + "\n")
+        print_identifier(ast[2])
     elif expression_type in ['true', 'false']:
         fout.write(expression_type + "\n")
     elif expression_type == 'let':
         fout.write("let\n")
-        fout.write("let-binding-list\n")
         print_list(ast[2], print_binding)
-        fout.write("body:exp\n")
         print_exp(ast[3])
     elif expression_type == 'case':
         fout.write("case\n")
-        fout.write("case-expression:exp\n")
         print_exp(ast[2])
-        fout.write("case-elements-list\n")
         print_list(ast[3], print_case_element)
+    elif expression_type == 'tilde':
+        fout.write("negate\n")
+        print_exp(ast[2])
+    elif expression_type == 'TRUE':
+        fout.write("true\n")
+    elif expression_type == 'FALSE':
+        fout.write("false\n")
     else:
+        print_identifier(ast)
         print("Unhandled expression type:", expression_type)
 
 
 def print_binding(ast):
     if len(ast) == 4:
         fout.write("let_binding_no_init\n")
-        print_identifier(ast[1])
         print_identifier(ast[2])
+        print_identifier(ast[3])
     elif len(ast) == 5:
         fout.write("let_binding_init\n")
-        print_identifier(ast[1])
         print_identifier(ast[2])
-        fout.write("value:exp\n")
-        print_exp(ast[3])
+        print_identifier(ast[3])
+        print_exp(ast[4])
 
 def print_case_element(ast):
-    fout.write("case-element\n")
     print_identifier(ast[1])
     print_identifier(ast[2])
-    fout.write("case-element-body:exp\n")
     print_exp(ast[3])
 
 def print_feature(ast):
@@ -468,20 +470,20 @@ def print_feature(ast):
         fout.write("attribute_init\n")
         print_identifier(ast[2])
         print_identifier(ast[3])
-        fout.write("init:exp\n")
         print_exp(ast[4])
     elif feature_type == 'method':
-        print(ast)
         fout.write("method\n")
         print_identifier(ast[2])
         print_list(ast[3], print_formal)
         print_identifier(ast[4])
         print_exp(ast[5])
     else:
+        fout.write(ast[1] + "\n")
         print("Unhandled feature type:", feature_type)
 
 def print_formal(ast):
-    print_identifier(ast)
+    print_identifier(ast[2])
+    print_identifier(ast[3])
 
 def print_list(ast, print_element_function):
     fout.write(str(len(ast))+ "\n") 
