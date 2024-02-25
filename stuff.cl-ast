@@ -184,7 +184,7 @@ out_string
 1
 36
 string
-Original string: 
+Original string:
 36
 self_dispatch
 36
@@ -221,7 +221,7 @@ concat
 1
 39
 string
- More test string stuff
+More test string stuff
 40
 block
 3
@@ -232,7 +232,7 @@ out_string
 1
 41
 string
-Concatenated string: 
+Concatenated string:
 41
 self_dispatch
 41
@@ -283,7 +283,7 @@ out_string
 1
 47
 string
-Substring from index 7 to 11: 
+Substring from index 7 to 11:
 47
 self_dispatch
 47
@@ -328,7 +328,7 @@ out_string
 1
 53
 string
-Length of the string: 
+Length of the string:
 53
 self_dispatch
 53
@@ -368,7 +368,7 @@ out_string
 1
 59
 string
-Polymorphic dispatch example: 
+Polymorphic dispatch example:
 59
 dynamic_dispatch
 59
@@ -459,7 +459,7 @@ out_string
 1
 80
 string
-Testing dynamic dispatch: 
+Testing dynamic dispatch:
 81
 dynamic_dispatch
 81
@@ -514,7 +514,7 @@ out_string
 1
 90
 string
-Testing if 
+Testing if
 90
 self_dispatch
 90
@@ -531,7 +531,7 @@ out_string
 1
 90
 string
- is even: 
+is even:
 91
 if
 91
@@ -570,7 +570,7 @@ out_string
 1
 97
 string
-Factorial of 
+Factorial of
 97
 self_dispatch
 97
@@ -587,7 +587,7 @@ out_string
 1
 97
 string
- is: 
+is:
 98
 self_dispatch
 98
@@ -621,7 +621,7 @@ out_string
 1
 99
 string
-Random tests of 
+Random tests of
 99
 self_dispatch
 99
@@ -638,7 +638,7 @@ out_string
 1
 99
 string
- is: 
+is:
 100
 self_dispatch
 100
