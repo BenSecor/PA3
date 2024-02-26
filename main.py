@@ -205,7 +205,7 @@ def p_exp_not(p):
     'exp : NOT exp'
     p[0] = (p.lineno(1), 'not', p[2])
 
-def p_exp_paren(p): # very unsure of this one, not on the project output guidelines?
+def p_exp_paren(p):
     'exp : LPAREN exp RPAREN'
     p[0] = p[2]
 
