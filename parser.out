@@ -52,25 +52,24 @@ Rule 46    let_list -> identifier COLON type LARROW exp
 Rule 47    let_list -> identifier COLON type COMMA let_list
 Rule 48    let_list -> identifier COLON type LARROW exp COMMA let_list
 Rule 49    exp -> CASE exp OF case_list ESAC
-Rule 50    case_list -> identifier COLON type RARROW exp
+Rule 50    case_list -> identifier COLON type RARROW exp SEMI
 Rule 51    case_list -> identifier COLON type RARROW exp SEMI case_list
-Rule 52    case_list -> <empty>
-Rule 53    exp -> exp AT type DOT identifier LPAREN exp_list RPAREN
-Rule 54    exp_list -> exp
-Rule 55    exp_list -> exp COMMA exp_list
-Rule 56    exp_list_semi -> exp SEMI
-Rule 57    exp_list_semi -> exp SEMI exp_list_semi
-Rule 58    exp -> identifier
+Rule 52    exp -> exp AT type DOT identifier LPAREN exp_list RPAREN
+Rule 53    exp_list -> exp
+Rule 54    exp_list -> exp COMMA exp_list
+Rule 55    exp_list_semi -> exp SEMI
+Rule 56    exp_list_semi -> exp SEMI exp_list_semi
+Rule 57    exp -> identifier
 
 Terminals, with rules where they appear
 
-AT                   : 53
+AT                   : 52
 CASE                 : 49
 CLASS                : 4 5
 COLON                : 10 11 12 13 17 45 46 47 48 50 51
-COMMA                : 15 47 48 55
+COMMA                : 15 47 48 54
 DIVIDE               : 21
-DOT                  : 39 40 53
+DOT                  : 39 40 52
 ELSE                 : 41
 EQUALS               : 25
 ESAC                 : 49
@@ -87,7 +86,7 @@ LBRACE               : 4 5 10 11 43
 LE                   : 24
 LET                  : 44
 LOOP                 : 42
-LPAREN               : 10 11 27 35 36 37 38 39 40 53
+LPAREN               : 10 11 27 35 36 37 38 39 40 52
 LT                   : 23
 MINUS                : 19
 NEW                  : 33
@@ -97,8 +96,8 @@ PLUS                 : 18
 POOL                 : 42
 RARROW               : 50 51
 RBRACE               : 4 5 10 11 43
-RPAREN               : 10 11 27 35 36 37 38 39 40 53
-SEMI                 : 3 9 51 56 57
+RPAREN               : 10 11 27 35 36 37 38 39 40 52
+SEMI                 : 3 9 50 51 55 56
 STRING               : 29
 THEN                 : 41
 TILDE                : 22
@@ -113,17 +112,17 @@ Nonterminals, with rules where they appear
 case_list            : 49 51
 class                : 3
 classlist            : 1 3
-exp                  : 10 11 13 18 18 19 19 20 20 21 21 22 23 23 24 24 25 25 26 27 32 34 37 38 39 40 41 41 41 42 42 44 46 48 49 50 51 53 54 55 56 57
-exp_list             : 35 37 39 53 55
-exp_list_semi        : 43 57
+exp                  : 10 11 13 18 18 19 19 20 20 21 21 22 23 23 24 24 25 25 26 27 32 34 37 38 39 40 41 41 41 42 42 44 46 48 49 50 51 52 53 54 55 56
+exp_list             : 35 37 39 52 54
+exp_list_semi        : 43 56
 feature              : 9
 featurelist          : 4 5 9
 formal               : 14 15
 formals              : 10 15
-identifier           : 10 11 12 13 17 34 35 36 37 38 39 40 45 46 47 48 50 51 53 58
+identifier           : 10 11 12 13 17 34 35 36 37 38 39 40 45 46 47 48 50 51 52 57
 let_list             : 44 47 48
 program              : 0
-type                 : 4 5 5 10 11 12 13 17 33 45 46 47 48 50 51 53
+type                 : 4 5 5 10 11 12 13 17 33 45 46 47 48 50 51 52
 
 Parsing method: LALR
 
@@ -224,7 +223,6 @@ state 7
     POOL            reduce using rule 6 (type -> TYPE .)
     FI              reduce using rule 6 (type -> TYPE .)
     IN              reduce using rule 6 (type -> TYPE .)
-    ESAC            reduce using rule 6 (type -> TYPE .)
     RARROW          reduce using rule 6 (type -> TYPE .)
 
 
@@ -315,7 +313,6 @@ state 14
     POOL            reduce using rule 7 (identifier -> IDENTIFIER .)
     FI              reduce using rule 7 (identifier -> IDENTIFIER .)
     IN              reduce using rule 7 (identifier -> IDENTIFIER .)
-    ESAC            reduce using rule 7 (identifier -> IDENTIFIER .)
 
 
 state 15
@@ -523,8 +520,8 @@ state 32
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -589,32 +586,31 @@ state 38
     (34) exp -> identifier . LARROW exp
     (35) exp -> identifier . LPAREN exp_list RPAREN
     (36) exp -> identifier . LPAREN RPAREN
-    (58) exp -> identifier .
+    (57) exp -> identifier .
 
     LARROW          shift and go to state 56
     LPAREN          shift and go to state 57
-    PLUS            reduce using rule 58 (exp -> identifier .)
-    MINUS           reduce using rule 58 (exp -> identifier .)
-    TIMES           reduce using rule 58 (exp -> identifier .)
-    DIVIDE          reduce using rule 58 (exp -> identifier .)
-    LT              reduce using rule 58 (exp -> identifier .)
-    LE              reduce using rule 58 (exp -> identifier .)
-    EQUALS          reduce using rule 58 (exp -> identifier .)
-    DOT             reduce using rule 58 (exp -> identifier .)
-    AT              reduce using rule 58 (exp -> identifier .)
-    IDENTIFIER      reduce using rule 58 (exp -> identifier .)
-    SEMI            reduce using rule 58 (exp -> identifier .)
-    RPAREN          reduce using rule 58 (exp -> identifier .)
-    THEN            reduce using rule 58 (exp -> identifier .)
-    LOOP            reduce using rule 58 (exp -> identifier .)
-    OF              reduce using rule 58 (exp -> identifier .)
-    RBRACE          reduce using rule 58 (exp -> identifier .)
-    COMMA           reduce using rule 58 (exp -> identifier .)
-    ELSE            reduce using rule 58 (exp -> identifier .)
-    POOL            reduce using rule 58 (exp -> identifier .)
-    FI              reduce using rule 58 (exp -> identifier .)
-    IN              reduce using rule 58 (exp -> identifier .)
-    ESAC            reduce using rule 58 (exp -> identifier .)
+    PLUS            reduce using rule 57 (exp -> identifier .)
+    MINUS           reduce using rule 57 (exp -> identifier .)
+    TIMES           reduce using rule 57 (exp -> identifier .)
+    DIVIDE          reduce using rule 57 (exp -> identifier .)
+    LT              reduce using rule 57 (exp -> identifier .)
+    LE              reduce using rule 57 (exp -> identifier .)
+    EQUALS          reduce using rule 57 (exp -> identifier .)
+    DOT             reduce using rule 57 (exp -> identifier .)
+    AT              reduce using rule 57 (exp -> identifier .)
+    IDENTIFIER      reduce using rule 57 (exp -> identifier .)
+    SEMI            reduce using rule 57 (exp -> identifier .)
+    RPAREN          reduce using rule 57 (exp -> identifier .)
+    THEN            reduce using rule 57 (exp -> identifier .)
+    LOOP            reduce using rule 57 (exp -> identifier .)
+    OF              reduce using rule 57 (exp -> identifier .)
+    RBRACE          reduce using rule 57 (exp -> identifier .)
+    COMMA           reduce using rule 57 (exp -> identifier .)
+    ELSE            reduce using rule 57 (exp -> identifier .)
+    POOL            reduce using rule 57 (exp -> identifier .)
+    FI              reduce using rule 57 (exp -> identifier .)
+    IN              reduce using rule 57 (exp -> identifier .)
 
 
 state 39
@@ -631,7 +627,7 @@ state 39
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
     SEMI            reduce using rule 13 (feature -> identifier COLON type LARROW exp .)
@@ -679,8 +675,8 @@ state 40
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -733,8 +729,8 @@ state 41
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -787,8 +783,8 @@ state 42
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -835,7 +831,6 @@ state 43
     POOL            reduce using rule 28 (exp -> INTEGER .)
     FI              reduce using rule 28 (exp -> INTEGER .)
     IN              reduce using rule 28 (exp -> INTEGER .)
-    ESAC            reduce using rule 28 (exp -> INTEGER .)
 
 
 state 44
@@ -863,7 +858,6 @@ state 44
     POOL            reduce using rule 29 (exp -> STRING .)
     FI              reduce using rule 29 (exp -> STRING .)
     IN              reduce using rule 29 (exp -> STRING .)
-    ESAC            reduce using rule 29 (exp -> STRING .)
 
 
 state 45
@@ -891,7 +885,6 @@ state 45
     POOL            reduce using rule 30 (exp -> TRUE .)
     FI              reduce using rule 30 (exp -> TRUE .)
     IN              reduce using rule 30 (exp -> TRUE .)
-    ESAC            reduce using rule 30 (exp -> TRUE .)
 
 
 state 46
@@ -919,7 +912,6 @@ state 46
     POOL            reduce using rule 31 (exp -> FALSE .)
     FI              reduce using rule 31 (exp -> FALSE .)
     IN              reduce using rule 31 (exp -> FALSE .)
-    ESAC            reduce using rule 31 (exp -> FALSE .)
 
 
 state 47
@@ -953,8 +945,8 @@ state 47
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -1016,8 +1008,8 @@ state 49
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -1070,8 +1062,8 @@ state 50
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -1096,8 +1088,8 @@ state 50
 state 51
 
     (43) exp -> LBRACE . exp_list_semi RBRACE
-    (56) exp_list_semi -> . exp SEMI
-    (57) exp_list_semi -> . exp SEMI exp_list_semi
+    (55) exp_list_semi -> . exp SEMI
+    (56) exp_list_semi -> . exp SEMI exp_list_semi
     (18) exp -> . exp PLUS exp
     (19) exp -> . exp MINUS exp
     (20) exp -> . exp TIMES exp
@@ -1126,8 +1118,8 @@ state 51
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -1195,8 +1187,8 @@ state 53
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -1256,8 +1248,8 @@ state 55
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -1310,8 +1302,8 @@ state 56
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -1337,8 +1329,8 @@ state 57
 
     (35) exp -> identifier LPAREN . exp_list RPAREN
     (36) exp -> identifier LPAREN . RPAREN
-    (54) exp_list -> . exp
-    (55) exp_list -> . exp COMMA exp_list
+    (53) exp_list -> . exp
+    (54) exp_list -> . exp COMMA exp_list
     (18) exp -> . exp PLUS exp
     (19) exp -> . exp MINUS exp
     (20) exp -> . exp TIMES exp
@@ -1367,8 +1359,8 @@ state 57
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     RPAREN          shift and go to state 84
@@ -1431,8 +1423,8 @@ state 59
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -1485,8 +1477,8 @@ state 60
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -1539,8 +1531,8 @@ state 61
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -1593,8 +1585,8 @@ state 62
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -1647,8 +1639,8 @@ state 63
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -1701,8 +1693,8 @@ state 64
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -1755,8 +1747,8 @@ state 65
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -1790,7 +1782,7 @@ state 66
 
 state 67
 
-    (53) exp -> exp AT . type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp AT . type DOT identifier LPAREN exp_list RPAREN
     (6) type -> . TYPE
 
     TYPE            shift and go to state 7
@@ -1811,7 +1803,7 @@ state 68
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
   ! shift/reduce conflict for PLUS resolved as shift
@@ -1835,7 +1827,6 @@ state 68
     POOL            reduce using rule 22 (exp -> TILDE exp .)
     FI              reduce using rule 22 (exp -> TILDE exp .)
     IN              reduce using rule 22 (exp -> TILDE exp .)
-    ESAC            reduce using rule 22 (exp -> TILDE exp .)
     PLUS            shift and go to state 59
     MINUS           shift and go to state 60
     TIMES           shift and go to state 61
@@ -1874,7 +1865,7 @@ state 69
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
   ! shift/reduce conflict for PLUS resolved as shift
@@ -1898,7 +1889,6 @@ state 69
     POOL            reduce using rule 26 (exp -> NOT exp .)
     FI              reduce using rule 26 (exp -> NOT exp .)
     IN              reduce using rule 26 (exp -> NOT exp .)
-    ESAC            reduce using rule 26 (exp -> NOT exp .)
     PLUS            shift and go to state 59
     MINUS           shift and go to state 60
     TIMES           shift and go to state 61
@@ -1937,7 +1927,7 @@ state 70
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
     RPAREN          shift and go to state 96
@@ -1968,7 +1958,7 @@ state 71
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
   ! shift/reduce conflict for PLUS resolved as shift
@@ -1992,7 +1982,6 @@ state 71
     POOL            reduce using rule 32 (exp -> ISVOID exp .)
     FI              reduce using rule 32 (exp -> ISVOID exp .)
     IN              reduce using rule 32 (exp -> ISVOID exp .)
-    ESAC            reduce using rule 32 (exp -> ISVOID exp .)
     PLUS            shift and go to state 59
     MINUS           shift and go to state 60
     TIMES           shift and go to state 61
@@ -2042,7 +2031,6 @@ state 72
     POOL            reduce using rule 33 (exp -> NEW type .)
     FI              reduce using rule 33 (exp -> NEW type .)
     IN              reduce using rule 33 (exp -> NEW type .)
-    ESAC            reduce using rule 33 (exp -> NEW type .)
 
 
 state 73
@@ -2059,7 +2047,7 @@ state 73
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
     THEN            shift and go to state 97
@@ -2090,7 +2078,7 @@ state 74
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
     LOOP            shift and go to state 98
@@ -2116,8 +2104,8 @@ state 75
 
 state 76
 
-    (56) exp_list_semi -> exp . SEMI
-    (57) exp_list_semi -> exp . SEMI exp_list_semi
+    (55) exp_list_semi -> exp . SEMI
+    (56) exp_list_semi -> exp . SEMI exp_list_semi
     (18) exp -> exp . PLUS exp
     (19) exp -> exp . MINUS exp
     (20) exp -> exp . TIMES exp
@@ -2129,7 +2117,7 @@ state 76
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
     SEMI            shift and go to state 100
@@ -2177,7 +2165,7 @@ state 79
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
     OF              shift and go to state 103
@@ -2225,8 +2213,8 @@ state 80
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -2262,7 +2250,7 @@ state 81
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
     RBRACE          shift and go to state 105
@@ -2293,7 +2281,7 @@ state 82
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
   ! shift/reduce conflict for PLUS resolved as shift
@@ -2317,7 +2305,6 @@ state 82
     POOL            reduce using rule 34 (exp -> identifier LARROW exp .)
     FI              reduce using rule 34 (exp -> identifier LARROW exp .)
     IN              reduce using rule 34 (exp -> identifier LARROW exp .)
-    ESAC            reduce using rule 34 (exp -> identifier LARROW exp .)
     PLUS            shift and go to state 59
     MINUS           shift and go to state 60
     TIMES           shift and go to state 61
@@ -2374,13 +2361,12 @@ state 84
     POOL            reduce using rule 36 (exp -> identifier LPAREN RPAREN .)
     FI              reduce using rule 36 (exp -> identifier LPAREN RPAREN .)
     IN              reduce using rule 36 (exp -> identifier LPAREN RPAREN .)
-    ESAC            reduce using rule 36 (exp -> identifier LPAREN RPAREN .)
 
 
 state 85
 
-    (54) exp_list -> exp .
-    (55) exp_list -> exp . COMMA exp_list
+    (53) exp_list -> exp .
+    (54) exp_list -> exp . COMMA exp_list
     (18) exp -> exp . PLUS exp
     (19) exp -> exp . MINUS exp
     (20) exp -> exp . TIMES exp
@@ -2392,10 +2378,10 @@ state 85
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
-    RPAREN          reduce using rule 54 (exp_list -> exp .)
+    RPAREN          reduce using rule 53 (exp_list -> exp .)
     COMMA           shift and go to state 107
     PLUS            shift and go to state 59
     MINUS           shift and go to state 60
@@ -2414,8 +2400,8 @@ state 86
 
     (37) exp -> exp identifier LPAREN . exp_list RPAREN
     (38) exp -> exp identifier LPAREN . RPAREN
-    (54) exp_list -> . exp
-    (55) exp_list -> . exp COMMA exp_list
+    (53) exp_list -> . exp
+    (54) exp_list -> . exp COMMA exp_list
     (18) exp -> . exp PLUS exp
     (19) exp -> . exp MINUS exp
     (20) exp -> . exp TIMES exp
@@ -2444,8 +2430,8 @@ state 86
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     RPAREN          shift and go to state 109
@@ -2483,14 +2469,11 @@ state 87
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
     PLUS            reduce using rule 18 (exp -> exp PLUS exp .)
     MINUS           reduce using rule 18 (exp -> exp PLUS exp .)
-    LT              reduce using rule 18 (exp -> exp PLUS exp .)
-    LE              reduce using rule 18 (exp -> exp PLUS exp .)
-    EQUALS          reduce using rule 18 (exp -> exp PLUS exp .)
     DOT             reduce using rule 18 (exp -> exp PLUS exp .)
     AT              reduce using rule 18 (exp -> exp PLUS exp .)
     IDENTIFIER      reduce using rule 18 (exp -> exp PLUS exp .)
@@ -2505,17 +2488,19 @@ state 87
     POOL            reduce using rule 18 (exp -> exp PLUS exp .)
     FI              reduce using rule 18 (exp -> exp PLUS exp .)
     IN              reduce using rule 18 (exp -> exp PLUS exp .)
-    ESAC            reduce using rule 18 (exp -> exp PLUS exp .)
     TIMES           shift and go to state 61
     DIVIDE          shift and go to state 62
+    LT              shift and go to state 63
+    LE              shift and go to state 64
+    EQUALS          shift and go to state 65
 
   ! TIMES           [ reduce using rule 18 (exp -> exp PLUS exp .) ]
   ! DIVIDE          [ reduce using rule 18 (exp -> exp PLUS exp .) ]
+  ! LT              [ reduce using rule 18 (exp -> exp PLUS exp .) ]
+  ! LE              [ reduce using rule 18 (exp -> exp PLUS exp .) ]
+  ! EQUALS          [ reduce using rule 18 (exp -> exp PLUS exp .) ]
   ! PLUS            [ shift and go to state 59 ]
   ! MINUS           [ shift and go to state 60 ]
-  ! LT              [ shift and go to state 63 ]
-  ! LE              [ shift and go to state 64 ]
-  ! EQUALS          [ shift and go to state 65 ]
   ! DOT             [ shift and go to state 66 ]
   ! AT              [ shift and go to state 67 ]
   ! IDENTIFIER      [ shift and go to state 14 ]
@@ -2536,14 +2521,11 @@ state 88
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
     PLUS            reduce using rule 19 (exp -> exp MINUS exp .)
     MINUS           reduce using rule 19 (exp -> exp MINUS exp .)
-    LT              reduce using rule 19 (exp -> exp MINUS exp .)
-    LE              reduce using rule 19 (exp -> exp MINUS exp .)
-    EQUALS          reduce using rule 19 (exp -> exp MINUS exp .)
     DOT             reduce using rule 19 (exp -> exp MINUS exp .)
     AT              reduce using rule 19 (exp -> exp MINUS exp .)
     IDENTIFIER      reduce using rule 19 (exp -> exp MINUS exp .)
@@ -2558,17 +2540,19 @@ state 88
     POOL            reduce using rule 19 (exp -> exp MINUS exp .)
     FI              reduce using rule 19 (exp -> exp MINUS exp .)
     IN              reduce using rule 19 (exp -> exp MINUS exp .)
-    ESAC            reduce using rule 19 (exp -> exp MINUS exp .)
     TIMES           shift and go to state 61
     DIVIDE          shift and go to state 62
+    LT              shift and go to state 63
+    LE              shift and go to state 64
+    EQUALS          shift and go to state 65
 
   ! TIMES           [ reduce using rule 19 (exp -> exp MINUS exp .) ]
   ! DIVIDE          [ reduce using rule 19 (exp -> exp MINUS exp .) ]
+  ! LT              [ reduce using rule 19 (exp -> exp MINUS exp .) ]
+  ! LE              [ reduce using rule 19 (exp -> exp MINUS exp .) ]
+  ! EQUALS          [ reduce using rule 19 (exp -> exp MINUS exp .) ]
   ! PLUS            [ shift and go to state 59 ]
   ! MINUS           [ shift and go to state 60 ]
-  ! LT              [ shift and go to state 63 ]
-  ! LE              [ shift and go to state 64 ]
-  ! EQUALS          [ shift and go to state 65 ]
   ! DOT             [ shift and go to state 66 ]
   ! AT              [ shift and go to state 67 ]
   ! IDENTIFIER      [ shift and go to state 14 ]
@@ -2589,16 +2573,13 @@ state 89
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
     PLUS            reduce using rule 20 (exp -> exp TIMES exp .)
     MINUS           reduce using rule 20 (exp -> exp TIMES exp .)
     TIMES           reduce using rule 20 (exp -> exp TIMES exp .)
     DIVIDE          reduce using rule 20 (exp -> exp TIMES exp .)
-    LT              reduce using rule 20 (exp -> exp TIMES exp .)
-    LE              reduce using rule 20 (exp -> exp TIMES exp .)
-    EQUALS          reduce using rule 20 (exp -> exp TIMES exp .)
     DOT             reduce using rule 20 (exp -> exp TIMES exp .)
     AT              reduce using rule 20 (exp -> exp TIMES exp .)
     IDENTIFIER      reduce using rule 20 (exp -> exp TIMES exp .)
@@ -2613,15 +2594,17 @@ state 89
     POOL            reduce using rule 20 (exp -> exp TIMES exp .)
     FI              reduce using rule 20 (exp -> exp TIMES exp .)
     IN              reduce using rule 20 (exp -> exp TIMES exp .)
-    ESAC            reduce using rule 20 (exp -> exp TIMES exp .)
+    LT              shift and go to state 63
+    LE              shift and go to state 64
+    EQUALS          shift and go to state 65
 
+  ! LT              [ reduce using rule 20 (exp -> exp TIMES exp .) ]
+  ! LE              [ reduce using rule 20 (exp -> exp TIMES exp .) ]
+  ! EQUALS          [ reduce using rule 20 (exp -> exp TIMES exp .) ]
   ! PLUS            [ shift and go to state 59 ]
   ! MINUS           [ shift and go to state 60 ]
   ! TIMES           [ shift and go to state 61 ]
   ! DIVIDE          [ shift and go to state 62 ]
-  ! LT              [ shift and go to state 63 ]
-  ! LE              [ shift and go to state 64 ]
-  ! EQUALS          [ shift and go to state 65 ]
   ! DOT             [ shift and go to state 66 ]
   ! AT              [ shift and go to state 67 ]
   ! IDENTIFIER      [ shift and go to state 14 ]
@@ -2642,16 +2625,13 @@ state 90
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
     PLUS            reduce using rule 21 (exp -> exp DIVIDE exp .)
     MINUS           reduce using rule 21 (exp -> exp DIVIDE exp .)
     TIMES           reduce using rule 21 (exp -> exp DIVIDE exp .)
     DIVIDE          reduce using rule 21 (exp -> exp DIVIDE exp .)
-    LT              reduce using rule 21 (exp -> exp DIVIDE exp .)
-    LE              reduce using rule 21 (exp -> exp DIVIDE exp .)
-    EQUALS          reduce using rule 21 (exp -> exp DIVIDE exp .)
     DOT             reduce using rule 21 (exp -> exp DIVIDE exp .)
     AT              reduce using rule 21 (exp -> exp DIVIDE exp .)
     IDENTIFIER      reduce using rule 21 (exp -> exp DIVIDE exp .)
@@ -2666,15 +2646,17 @@ state 90
     POOL            reduce using rule 21 (exp -> exp DIVIDE exp .)
     FI              reduce using rule 21 (exp -> exp DIVIDE exp .)
     IN              reduce using rule 21 (exp -> exp DIVIDE exp .)
-    ESAC            reduce using rule 21 (exp -> exp DIVIDE exp .)
+    LT              shift and go to state 63
+    LE              shift and go to state 64
+    EQUALS          shift and go to state 65
 
+  ! LT              [ reduce using rule 21 (exp -> exp DIVIDE exp .) ]
+  ! LE              [ reduce using rule 21 (exp -> exp DIVIDE exp .) ]
+  ! EQUALS          [ reduce using rule 21 (exp -> exp DIVIDE exp .) ]
   ! PLUS            [ shift and go to state 59 ]
   ! MINUS           [ shift and go to state 60 ]
   ! TIMES           [ shift and go to state 61 ]
   ! DIVIDE          [ shift and go to state 62 ]
-  ! LT              [ shift and go to state 63 ]
-  ! LE              [ shift and go to state 64 ]
-  ! EQUALS          [ shift and go to state 65 ]
   ! DOT             [ shift and go to state 66 ]
   ! AT              [ shift and go to state 67 ]
   ! IDENTIFIER      [ shift and go to state 14 ]
@@ -2695,19 +2677,18 @@ state 91
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for TIMES resolved as shift
-  ! shift/reduce conflict for DIVIDE resolved as shift
-  ! shift/reduce conflict for LT resolved as shift
-  ! shift/reduce conflict for LE resolved as shift
-  ! shift/reduce conflict for EQUALS resolved as shift
-  ! shift/reduce conflict for DOT resolved as shift
-  ! shift/reduce conflict for AT resolved as shift
-  ! shift/reduce conflict for IDENTIFIER resolved as shift
+    PLUS            reduce using rule 23 (exp -> exp LT exp .)
+    MINUS           reduce using rule 23 (exp -> exp LT exp .)
+    TIMES           reduce using rule 23 (exp -> exp LT exp .)
+    DIVIDE          reduce using rule 23 (exp -> exp LT exp .)
+    LT              reduce using rule 23 (exp -> exp LT exp .)
+    EQUALS          reduce using rule 23 (exp -> exp LT exp .)
+    DOT             reduce using rule 23 (exp -> exp LT exp .)
+    AT              reduce using rule 23 (exp -> exp LT exp .)
+    IDENTIFIER      reduce using rule 23 (exp -> exp LT exp .)
     SEMI            reduce using rule 23 (exp -> exp LT exp .)
     RPAREN          reduce using rule 23 (exp -> exp LT exp .)
     THEN            reduce using rule 23 (exp -> exp LT exp .)
@@ -2719,28 +2700,18 @@ state 91
     POOL            reduce using rule 23 (exp -> exp LT exp .)
     FI              reduce using rule 23 (exp -> exp LT exp .)
     IN              reduce using rule 23 (exp -> exp LT exp .)
-    ESAC            reduce using rule 23 (exp -> exp LT exp .)
-    PLUS            shift and go to state 59
-    MINUS           shift and go to state 60
-    TIMES           shift and go to state 61
-    DIVIDE          shift and go to state 62
-    LT              shift and go to state 63
     LE              shift and go to state 64
-    EQUALS          shift and go to state 65
-    DOT             shift and go to state 66
-    AT              shift and go to state 67
-    IDENTIFIER      shift and go to state 14
 
-  ! PLUS            [ reduce using rule 23 (exp -> exp LT exp .) ]
-  ! MINUS           [ reduce using rule 23 (exp -> exp LT exp .) ]
-  ! TIMES           [ reduce using rule 23 (exp -> exp LT exp .) ]
-  ! DIVIDE          [ reduce using rule 23 (exp -> exp LT exp .) ]
-  ! LT              [ reduce using rule 23 (exp -> exp LT exp .) ]
   ! LE              [ reduce using rule 23 (exp -> exp LT exp .) ]
-  ! EQUALS          [ reduce using rule 23 (exp -> exp LT exp .) ]
-  ! DOT             [ reduce using rule 23 (exp -> exp LT exp .) ]
-  ! AT              [ reduce using rule 23 (exp -> exp LT exp .) ]
-  ! IDENTIFIER      [ reduce using rule 23 (exp -> exp LT exp .) ]
+  ! PLUS            [ shift and go to state 59 ]
+  ! MINUS           [ shift and go to state 60 ]
+  ! TIMES           [ shift and go to state 61 ]
+  ! DIVIDE          [ shift and go to state 62 ]
+  ! LT              [ shift and go to state 63 ]
+  ! EQUALS          [ shift and go to state 65 ]
+  ! DOT             [ shift and go to state 66 ]
+  ! AT              [ shift and go to state 67 ]
+  ! IDENTIFIER      [ shift and go to state 14 ]
 
     identifier                     shift and go to state 58
 
@@ -2758,19 +2729,19 @@ state 92
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for TIMES resolved as shift
-  ! shift/reduce conflict for DIVIDE resolved as shift
-  ! shift/reduce conflict for LT resolved as shift
-  ! shift/reduce conflict for LE resolved as shift
-  ! shift/reduce conflict for EQUALS resolved as shift
-  ! shift/reduce conflict for DOT resolved as shift
-  ! shift/reduce conflict for AT resolved as shift
-  ! shift/reduce conflict for IDENTIFIER resolved as shift
+    PLUS            reduce using rule 24 (exp -> exp LE exp .)
+    MINUS           reduce using rule 24 (exp -> exp LE exp .)
+    TIMES           reduce using rule 24 (exp -> exp LE exp .)
+    DIVIDE          reduce using rule 24 (exp -> exp LE exp .)
+    LT              reduce using rule 24 (exp -> exp LE exp .)
+    LE              reduce using rule 24 (exp -> exp LE exp .)
+    EQUALS          reduce using rule 24 (exp -> exp LE exp .)
+    DOT             reduce using rule 24 (exp -> exp LE exp .)
+    AT              reduce using rule 24 (exp -> exp LE exp .)
+    IDENTIFIER      reduce using rule 24 (exp -> exp LE exp .)
     SEMI            reduce using rule 24 (exp -> exp LE exp .)
     RPAREN          reduce using rule 24 (exp -> exp LE exp .)
     THEN            reduce using rule 24 (exp -> exp LE exp .)
@@ -2782,28 +2753,17 @@ state 92
     POOL            reduce using rule 24 (exp -> exp LE exp .)
     FI              reduce using rule 24 (exp -> exp LE exp .)
     IN              reduce using rule 24 (exp -> exp LE exp .)
-    ESAC            reduce using rule 24 (exp -> exp LE exp .)
-    PLUS            shift and go to state 59
-    MINUS           shift and go to state 60
-    TIMES           shift and go to state 61
-    DIVIDE          shift and go to state 62
-    LT              shift and go to state 63
-    LE              shift and go to state 64
-    EQUALS          shift and go to state 65
-    DOT             shift and go to state 66
-    AT              shift and go to state 67
-    IDENTIFIER      shift and go to state 14
 
-  ! PLUS            [ reduce using rule 24 (exp -> exp LE exp .) ]
-  ! MINUS           [ reduce using rule 24 (exp -> exp LE exp .) ]
-  ! TIMES           [ reduce using rule 24 (exp -> exp LE exp .) ]
-  ! DIVIDE          [ reduce using rule 24 (exp -> exp LE exp .) ]
-  ! LT              [ reduce using rule 24 (exp -> exp LE exp .) ]
-  ! LE              [ reduce using rule 24 (exp -> exp LE exp .) ]
-  ! EQUALS          [ reduce using rule 24 (exp -> exp LE exp .) ]
-  ! DOT             [ reduce using rule 24 (exp -> exp LE exp .) ]
-  ! AT              [ reduce using rule 24 (exp -> exp LE exp .) ]
-  ! IDENTIFIER      [ reduce using rule 24 (exp -> exp LE exp .) ]
+  ! PLUS            [ shift and go to state 59 ]
+  ! MINUS           [ shift and go to state 60 ]
+  ! TIMES           [ shift and go to state 61 ]
+  ! DIVIDE          [ shift and go to state 62 ]
+  ! LT              [ shift and go to state 63 ]
+  ! LE              [ shift and go to state 64 ]
+  ! EQUALS          [ shift and go to state 65 ]
+  ! DOT             [ shift and go to state 66 ]
+  ! AT              [ shift and go to state 67 ]
+  ! IDENTIFIER      [ shift and go to state 14 ]
 
     identifier                     shift and go to state 58
 
@@ -2821,19 +2781,17 @@ state 93
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for TIMES resolved as shift
-  ! shift/reduce conflict for DIVIDE resolved as shift
-  ! shift/reduce conflict for LT resolved as shift
-  ! shift/reduce conflict for LE resolved as shift
-  ! shift/reduce conflict for EQUALS resolved as shift
-  ! shift/reduce conflict for DOT resolved as shift
-  ! shift/reduce conflict for AT resolved as shift
-  ! shift/reduce conflict for IDENTIFIER resolved as shift
+    PLUS            reduce using rule 25 (exp -> exp EQUALS exp .)
+    MINUS           reduce using rule 25 (exp -> exp EQUALS exp .)
+    TIMES           reduce using rule 25 (exp -> exp EQUALS exp .)
+    DIVIDE          reduce using rule 25 (exp -> exp EQUALS exp .)
+    EQUALS          reduce using rule 25 (exp -> exp EQUALS exp .)
+    DOT             reduce using rule 25 (exp -> exp EQUALS exp .)
+    AT              reduce using rule 25 (exp -> exp EQUALS exp .)
+    IDENTIFIER      reduce using rule 25 (exp -> exp EQUALS exp .)
     SEMI            reduce using rule 25 (exp -> exp EQUALS exp .)
     RPAREN          reduce using rule 25 (exp -> exp EQUALS exp .)
     THEN            reduce using rule 25 (exp -> exp EQUALS exp .)
@@ -2845,28 +2803,19 @@ state 93
     POOL            reduce using rule 25 (exp -> exp EQUALS exp .)
     FI              reduce using rule 25 (exp -> exp EQUALS exp .)
     IN              reduce using rule 25 (exp -> exp EQUALS exp .)
-    ESAC            reduce using rule 25 (exp -> exp EQUALS exp .)
-    PLUS            shift and go to state 59
-    MINUS           shift and go to state 60
-    TIMES           shift and go to state 61
-    DIVIDE          shift and go to state 62
     LT              shift and go to state 63
     LE              shift and go to state 64
-    EQUALS          shift and go to state 65
-    DOT             shift and go to state 66
-    AT              shift and go to state 67
-    IDENTIFIER      shift and go to state 14
 
-  ! PLUS            [ reduce using rule 25 (exp -> exp EQUALS exp .) ]
-  ! MINUS           [ reduce using rule 25 (exp -> exp EQUALS exp .) ]
-  ! TIMES           [ reduce using rule 25 (exp -> exp EQUALS exp .) ]
-  ! DIVIDE          [ reduce using rule 25 (exp -> exp EQUALS exp .) ]
   ! LT              [ reduce using rule 25 (exp -> exp EQUALS exp .) ]
   ! LE              [ reduce using rule 25 (exp -> exp EQUALS exp .) ]
-  ! EQUALS          [ reduce using rule 25 (exp -> exp EQUALS exp .) ]
-  ! DOT             [ reduce using rule 25 (exp -> exp EQUALS exp .) ]
-  ! AT              [ reduce using rule 25 (exp -> exp EQUALS exp .) ]
-  ! IDENTIFIER      [ reduce using rule 25 (exp -> exp EQUALS exp .) ]
+  ! PLUS            [ shift and go to state 59 ]
+  ! MINUS           [ shift and go to state 60 ]
+  ! TIMES           [ shift and go to state 61 ]
+  ! DIVIDE          [ shift and go to state 62 ]
+  ! EQUALS          [ shift and go to state 65 ]
+  ! DOT             [ shift and go to state 66 ]
+  ! AT              [ shift and go to state 67 ]
+  ! IDENTIFIER      [ shift and go to state 14 ]
 
     identifier                     shift and go to state 58
 
@@ -2880,7 +2829,7 @@ state 94
 
 state 95
 
-    (53) exp -> exp AT type . DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp AT type . DOT identifier LPAREN exp_list RPAREN
 
     DOT             shift and go to state 111
 
@@ -2910,7 +2859,6 @@ state 96
     POOL            reduce using rule 27 (exp -> LPAREN exp RPAREN .)
     FI              reduce using rule 27 (exp -> LPAREN exp RPAREN .)
     IN              reduce using rule 27 (exp -> LPAREN exp RPAREN .)
-    ESAC            reduce using rule 27 (exp -> LPAREN exp RPAREN .)
 
 
 state 97
@@ -2944,8 +2892,8 @@ state 97
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -2998,8 +2946,8 @@ state 98
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -3046,15 +2994,14 @@ state 99
     POOL            reduce using rule 43 (exp -> LBRACE exp_list_semi RBRACE .)
     FI              reduce using rule 43 (exp -> LBRACE exp_list_semi RBRACE .)
     IN              reduce using rule 43 (exp -> LBRACE exp_list_semi RBRACE .)
-    ESAC            reduce using rule 43 (exp -> LBRACE exp_list_semi RBRACE .)
 
 
 state 100
 
-    (56) exp_list_semi -> exp SEMI .
-    (57) exp_list_semi -> exp SEMI . exp_list_semi
-    (56) exp_list_semi -> . exp SEMI
-    (57) exp_list_semi -> . exp SEMI exp_list_semi
+    (55) exp_list_semi -> exp SEMI .
+    (56) exp_list_semi -> exp SEMI . exp_list_semi
+    (55) exp_list_semi -> . exp SEMI
+    (56) exp_list_semi -> . exp SEMI exp_list_semi
     (18) exp -> . exp PLUS exp
     (19) exp -> . exp MINUS exp
     (20) exp -> . exp TIMES exp
@@ -3083,11 +3030,11 @@ state 100
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
-    RBRACE          reduce using rule 56 (exp_list_semi -> exp SEMI .)
+    RBRACE          reduce using rule 55 (exp_list_semi -> exp SEMI .)
     TILDE           shift and go to state 40
     NOT             shift and go to state 41
     LPAREN          shift and go to state 42
@@ -3139,8 +3086,8 @@ state 101
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -3177,12 +3124,10 @@ state 102
 state 103
 
     (49) exp -> CASE exp OF . case_list ESAC
-    (50) case_list -> . identifier COLON type RARROW exp
+    (50) case_list -> . identifier COLON type RARROW exp SEMI
     (51) case_list -> . identifier COLON type RARROW exp SEMI case_list
-    (52) case_list -> .
     (7) identifier -> . IDENTIFIER
 
-    ESAC            reduce using rule 52 (case_list -> .)
     IDENTIFIER      shift and go to state 14
 
     case_list                      shift and go to state 117
@@ -3202,7 +3147,7 @@ state 104
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
     RBRACE          shift and go to state 119
@@ -3251,14 +3196,13 @@ state 106
     POOL            reduce using rule 35 (exp -> identifier LPAREN exp_list RPAREN .)
     FI              reduce using rule 35 (exp -> identifier LPAREN exp_list RPAREN .)
     IN              reduce using rule 35 (exp -> identifier LPAREN exp_list RPAREN .)
-    ESAC            reduce using rule 35 (exp -> identifier LPAREN exp_list RPAREN .)
 
 
 state 107
 
-    (55) exp_list -> exp COMMA . exp_list
-    (54) exp_list -> . exp
-    (55) exp_list -> . exp COMMA exp_list
+    (54) exp_list -> exp COMMA . exp_list
+    (53) exp_list -> . exp
+    (54) exp_list -> . exp COMMA exp_list
     (18) exp -> . exp PLUS exp
     (19) exp -> . exp MINUS exp
     (20) exp -> . exp TIMES exp
@@ -3287,8 +3231,8 @@ state 107
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -3343,15 +3287,14 @@ state 109
     POOL            reduce using rule 38 (exp -> exp identifier LPAREN RPAREN .)
     FI              reduce using rule 38 (exp -> exp identifier LPAREN RPAREN .)
     IN              reduce using rule 38 (exp -> exp identifier LPAREN RPAREN .)
-    ESAC            reduce using rule 38 (exp -> exp identifier LPAREN RPAREN .)
 
 
 state 110
 
     (39) exp -> exp DOT identifier LPAREN . exp_list RPAREN
     (40) exp -> exp DOT identifier LPAREN . RPAREN
-    (54) exp_list -> . exp
-    (55) exp_list -> . exp COMMA exp_list
+    (53) exp_list -> . exp
+    (54) exp_list -> . exp COMMA exp_list
     (18) exp -> . exp PLUS exp
     (19) exp -> . exp MINUS exp
     (20) exp -> . exp TIMES exp
@@ -3380,8 +3323,8 @@ state 110
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     RPAREN          shift and go to state 123
@@ -3407,7 +3350,7 @@ state 110
 
 state 111
 
-    (53) exp -> exp AT type DOT . identifier LPAREN exp_list RPAREN
+    (52) exp -> exp AT type DOT . identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
     IDENTIFIER      shift and go to state 14
@@ -3428,7 +3371,7 @@ state 112
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
     ELSE            shift and go to state 125
@@ -3459,7 +3402,7 @@ state 113
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
     POOL            shift and go to state 126
@@ -3478,9 +3421,9 @@ state 113
 
 state 114
 
-    (57) exp_list_semi -> exp SEMI exp_list_semi .
+    (56) exp_list_semi -> exp SEMI exp_list_semi .
 
-    RBRACE          reduce using rule 57 (exp_list_semi -> exp SEMI exp_list_semi .)
+    RBRACE          reduce using rule 56 (exp_list_semi -> exp SEMI exp_list_semi .)
 
 
 state 115
@@ -3497,7 +3440,7 @@ state 115
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
   ! shift/reduce conflict for PLUS resolved as shift
@@ -3521,7 +3464,6 @@ state 115
     POOL            reduce using rule 44 (exp -> LET let_list IN exp .)
     FI              reduce using rule 44 (exp -> LET let_list IN exp .)
     IN              reduce using rule 44 (exp -> LET let_list IN exp .)
-    ESAC            reduce using rule 44 (exp -> LET let_list IN exp .)
     PLUS            shift and go to state 59
     MINUS           shift and go to state 60
     TIMES           shift and go to state 61
@@ -3567,7 +3509,7 @@ state 117
 
 state 118
 
-    (50) case_list -> identifier . COLON type RARROW exp
+    (50) case_list -> identifier . COLON type RARROW exp SEMI
     (51) case_list -> identifier . COLON type RARROW exp SEMI case_list
 
     COLON           shift and go to state 130
@@ -3582,9 +3524,9 @@ state 119
 
 state 120
 
-    (55) exp_list -> exp COMMA exp_list .
+    (54) exp_list -> exp COMMA exp_list .
 
-    RPAREN          reduce using rule 55 (exp_list -> exp COMMA exp_list .)
+    RPAREN          reduce using rule 54 (exp_list -> exp COMMA exp_list .)
 
 
 state 121
@@ -3612,7 +3554,6 @@ state 121
     POOL            reduce using rule 37 (exp -> exp identifier LPAREN exp_list RPAREN .)
     FI              reduce using rule 37 (exp -> exp identifier LPAREN exp_list RPAREN .)
     IN              reduce using rule 37 (exp -> exp identifier LPAREN exp_list RPAREN .)
-    ESAC            reduce using rule 37 (exp -> exp identifier LPAREN exp_list RPAREN .)
 
 
 state 122
@@ -3647,12 +3588,11 @@ state 123
     POOL            reduce using rule 40 (exp -> exp DOT identifier LPAREN RPAREN .)
     FI              reduce using rule 40 (exp -> exp DOT identifier LPAREN RPAREN .)
     IN              reduce using rule 40 (exp -> exp DOT identifier LPAREN RPAREN .)
-    ESAC            reduce using rule 40 (exp -> exp DOT identifier LPAREN RPAREN .)
 
 
 state 124
 
-    (53) exp -> exp AT type DOT identifier . LPAREN exp_list RPAREN
+    (52) exp -> exp AT type DOT identifier . LPAREN exp_list RPAREN
 
     LPAREN          shift and go to state 132
 
@@ -3688,8 +3628,8 @@ state 125
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -3736,7 +3676,6 @@ state 126
     POOL            reduce using rule 42 (exp -> WHILE exp LOOP exp POOL .)
     FI              reduce using rule 42 (exp -> WHILE exp LOOP exp POOL .)
     IN              reduce using rule 42 (exp -> WHILE exp LOOP exp POOL .)
-    ESAC            reduce using rule 42 (exp -> WHILE exp LOOP exp POOL .)
 
 
 state 127
@@ -3771,8 +3710,8 @@ state 127
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -3833,12 +3772,11 @@ state 129
     POOL            reduce using rule 49 (exp -> CASE exp OF case_list ESAC .)
     FI              reduce using rule 49 (exp -> CASE exp OF case_list ESAC .)
     IN              reduce using rule 49 (exp -> CASE exp OF case_list ESAC .)
-    ESAC            reduce using rule 49 (exp -> CASE exp OF case_list ESAC .)
 
 
 state 130
 
-    (50) case_list -> identifier COLON . type RARROW exp
+    (50) case_list -> identifier COLON . type RARROW exp SEMI
     (51) case_list -> identifier COLON . type RARROW exp SEMI case_list
     (6) type -> . TYPE
 
@@ -3871,14 +3809,13 @@ state 131
     POOL            reduce using rule 39 (exp -> exp DOT identifier LPAREN exp_list RPAREN .)
     FI              reduce using rule 39 (exp -> exp DOT identifier LPAREN exp_list RPAREN .)
     IN              reduce using rule 39 (exp -> exp DOT identifier LPAREN exp_list RPAREN .)
-    ESAC            reduce using rule 39 (exp -> exp DOT identifier LPAREN exp_list RPAREN .)
 
 
 state 132
 
-    (53) exp -> exp AT type DOT identifier LPAREN . exp_list RPAREN
-    (54) exp_list -> . exp
-    (55) exp_list -> . exp COMMA exp_list
+    (52) exp -> exp AT type DOT identifier LPAREN . exp_list RPAREN
+    (53) exp_list -> . exp
+    (54) exp_list -> . exp COMMA exp_list
     (18) exp -> . exp PLUS exp
     (19) exp -> . exp MINUS exp
     (20) exp -> . exp TIMES exp
@@ -3907,8 +3844,8 @@ state 132
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -3945,7 +3882,7 @@ state 133
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
     FI              shift and go to state 138
@@ -3977,7 +3914,7 @@ state 134
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
     IN              reduce using rule 46 (let_list -> identifier COLON type LARROW exp .)
@@ -4004,7 +3941,7 @@ state 135
 
 state 136
 
-    (50) case_list -> identifier COLON type . RARROW exp
+    (50) case_list -> identifier COLON type . RARROW exp SEMI
     (51) case_list -> identifier COLON type . RARROW exp SEMI case_list
 
     RARROW          shift and go to state 140
@@ -4012,7 +3949,7 @@ state 136
 
 state 137
 
-    (53) exp -> exp AT type DOT identifier LPAREN exp_list . RPAREN
+    (52) exp -> exp AT type DOT identifier LPAREN exp_list . RPAREN
 
     RPAREN          shift and go to state 141
 
@@ -4042,7 +3979,6 @@ state 138
     POOL            reduce using rule 41 (exp -> IF exp THEN exp ELSE exp FI .)
     FI              reduce using rule 41 (exp -> IF exp THEN exp ELSE exp FI .)
     IN              reduce using rule 41 (exp -> IF exp THEN exp ELSE exp FI .)
-    ESAC            reduce using rule 41 (exp -> IF exp THEN exp ELSE exp FI .)
 
 
 state 139
@@ -4061,7 +3997,7 @@ state 139
 
 state 140
 
-    (50) case_list -> identifier COLON type RARROW . exp
+    (50) case_list -> identifier COLON type RARROW . exp SEMI
     (51) case_list -> identifier COLON type RARROW . exp SEMI case_list
     (18) exp -> . exp PLUS exp
     (19) exp -> . exp MINUS exp
@@ -4091,8 +4027,8 @@ state 140
     (43) exp -> . LBRACE exp_list_semi RBRACE
     (44) exp -> . LET let_list IN exp
     (49) exp -> . CASE exp OF case_list ESAC
-    (53) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
-    (58) exp -> . identifier
+    (52) exp -> . exp AT type DOT identifier LPAREN exp_list RPAREN
+    (57) exp -> . identifier
     (7) identifier -> . IDENTIFIER
 
     TILDE           shift and go to state 40
@@ -4116,30 +4052,29 @@ state 140
 
 state 141
 
-    (53) exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .
+    (52) exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .
 
-    PLUS            reduce using rule 53 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
-    MINUS           reduce using rule 53 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
-    TIMES           reduce using rule 53 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
-    DIVIDE          reduce using rule 53 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
-    LT              reduce using rule 53 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
-    LE              reduce using rule 53 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
-    EQUALS          reduce using rule 53 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
-    DOT             reduce using rule 53 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
-    AT              reduce using rule 53 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
-    IDENTIFIER      reduce using rule 53 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
-    SEMI            reduce using rule 53 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
-    RPAREN          reduce using rule 53 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
-    THEN            reduce using rule 53 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
-    LOOP            reduce using rule 53 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
-    OF              reduce using rule 53 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
-    RBRACE          reduce using rule 53 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
-    COMMA           reduce using rule 53 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
-    ELSE            reduce using rule 53 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
-    POOL            reduce using rule 53 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
-    FI              reduce using rule 53 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
-    IN              reduce using rule 53 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
-    ESAC            reduce using rule 53 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
+    PLUS            reduce using rule 52 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
+    MINUS           reduce using rule 52 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
+    TIMES           reduce using rule 52 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
+    DIVIDE          reduce using rule 52 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
+    LT              reduce using rule 52 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
+    LE              reduce using rule 52 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
+    EQUALS          reduce using rule 52 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
+    DOT             reduce using rule 52 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
+    AT              reduce using rule 52 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
+    IDENTIFIER      reduce using rule 52 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
+    SEMI            reduce using rule 52 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
+    RPAREN          reduce using rule 52 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
+    THEN            reduce using rule 52 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
+    LOOP            reduce using rule 52 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
+    OF              reduce using rule 52 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
+    RBRACE          reduce using rule 52 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
+    COMMA           reduce using rule 52 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
+    ELSE            reduce using rule 52 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
+    POOL            reduce using rule 52 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
+    FI              reduce using rule 52 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
+    IN              reduce using rule 52 (exp -> exp AT type DOT identifier LPAREN exp_list RPAREN .)
 
 
 state 142
@@ -4151,7 +4086,7 @@ state 142
 
 state 143
 
-    (50) case_list -> identifier COLON type RARROW exp .
+    (50) case_list -> identifier COLON type RARROW exp . SEMI
     (51) case_list -> identifier COLON type RARROW exp . SEMI case_list
     (18) exp -> exp . PLUS exp
     (19) exp -> exp . MINUS exp
@@ -4164,10 +4099,9 @@ state 143
     (38) exp -> exp . identifier LPAREN RPAREN
     (39) exp -> exp . DOT identifier LPAREN exp_list RPAREN
     (40) exp -> exp . DOT identifier LPAREN RPAREN
-    (53) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
+    (52) exp -> exp . AT type DOT identifier LPAREN exp_list RPAREN
     (7) identifier -> . IDENTIFIER
 
-    ESAC            reduce using rule 50 (case_list -> identifier COLON type RARROW exp .)
     SEMI            shift and go to state 144
     PLUS            shift and go to state 59
     MINUS           shift and go to state 60
@@ -4184,13 +4118,13 @@ state 143
 
 state 144
 
+    (50) case_list -> identifier COLON type RARROW exp SEMI .
     (51) case_list -> identifier COLON type RARROW exp SEMI . case_list
-    (50) case_list -> . identifier COLON type RARROW exp
+    (50) case_list -> . identifier COLON type RARROW exp SEMI
     (51) case_list -> . identifier COLON type RARROW exp SEMI case_list
-    (52) case_list -> .
     (7) identifier -> . IDENTIFIER
 
-    ESAC            reduce using rule 52 (case_list -> .)
+    ESAC            reduce using rule 50 (case_list -> identifier COLON type RARROW exp SEMI .)
     IDENTIFIER      shift and go to state 14
 
     identifier                     shift and go to state 118
@@ -4246,36 +4180,6 @@ WARNING: shift/reduce conflict for EQUALS in state 82 resolved as shift
 WARNING: shift/reduce conflict for DOT in state 82 resolved as shift
 WARNING: shift/reduce conflict for AT in state 82 resolved as shift
 WARNING: shift/reduce conflict for IDENTIFIER in state 82 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 91 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 91 resolved as shift
-WARNING: shift/reduce conflict for TIMES in state 91 resolved as shift
-WARNING: shift/reduce conflict for DIVIDE in state 91 resolved as shift
-WARNING: shift/reduce conflict for LT in state 91 resolved as shift
-WARNING: shift/reduce conflict for LE in state 91 resolved as shift
-WARNING: shift/reduce conflict for EQUALS in state 91 resolved as shift
-WARNING: shift/reduce conflict for DOT in state 91 resolved as shift
-WARNING: shift/reduce conflict for AT in state 91 resolved as shift
-WARNING: shift/reduce conflict for IDENTIFIER in state 91 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 92 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 92 resolved as shift
-WARNING: shift/reduce conflict for TIMES in state 92 resolved as shift
-WARNING: shift/reduce conflict for DIVIDE in state 92 resolved as shift
-WARNING: shift/reduce conflict for LT in state 92 resolved as shift
-WARNING: shift/reduce conflict for LE in state 92 resolved as shift
-WARNING: shift/reduce conflict for EQUALS in state 92 resolved as shift
-WARNING: shift/reduce conflict for DOT in state 92 resolved as shift
-WARNING: shift/reduce conflict for AT in state 92 resolved as shift
-WARNING: shift/reduce conflict for IDENTIFIER in state 92 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 93 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 93 resolved as shift
-WARNING: shift/reduce conflict for TIMES in state 93 resolved as shift
-WARNING: shift/reduce conflict for DIVIDE in state 93 resolved as shift
-WARNING: shift/reduce conflict for LT in state 93 resolved as shift
-WARNING: shift/reduce conflict for LE in state 93 resolved as shift
-WARNING: shift/reduce conflict for EQUALS in state 93 resolved as shift
-WARNING: shift/reduce conflict for DOT in state 93 resolved as shift
-WARNING: shift/reduce conflict for AT in state 93 resolved as shift
-WARNING: shift/reduce conflict for IDENTIFIER in state 93 resolved as shift
 WARNING: shift/reduce conflict for PLUS in state 115 resolved as shift
 WARNING: shift/reduce conflict for MINUS in state 115 resolved as shift
 WARNING: shift/reduce conflict for TIMES in state 115 resolved as shift
