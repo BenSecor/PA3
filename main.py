@@ -142,9 +142,6 @@ def p_feature_withlist(p):
     'feature : identifier LPAREN formals RPAREN COLON type LBRACE exp RBRACE'
     p[0] = (p.lineno(2), 'method', p[1], p[3], p[6], p[8])
 
-# def p_feature_withnoinit(p):
-#     'feature : identifier LPAREN RPAREN COLON type LBRACE RBRACE'
-#     p[0] = (p.lineno(2), 'method', p[1], [], p[5])
 
 def p_feature_withinit(p):
     'feature : identifier LPAREN RPAREN COLON type LBRACE exp RBRACE'
@@ -158,7 +155,6 @@ def p_feature_attributeinit(p):
     'feature : identifier COLON type LARROW exp'
     p[0] = (p.lineno(2), 'attribute_init', p[1], p[3], p[5])
     
-
 def p_formals(p):
     '''formals : formal
                 | formal COMMA formals
