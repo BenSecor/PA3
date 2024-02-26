@@ -89,7 +89,7 @@ tokens = (
 )
 
 precedence = (
-              ('left', 'LARROW'), #binds loosest
+              ('right', 'LARROW'), #binds loosest
               ('left' , 'NOT'),
               ('nonassoc', 'EQUALS'),
               ('nonassoc', 'LT'),
@@ -98,7 +98,8 @@ precedence = (
               ('left', 'TIMES', 'DIVIDE'),  
               ('nonassoc' , 'ISVOID'),
               ('nonassoc' , 'TILDE'),
-              ('nonassoc' , 'AT') #binds tightest
+              ('nonassoc' , 'AT') ,
+              ('left', 'DOT') #binds tightest
               )
 
 def p_program_classlist(p):
