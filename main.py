@@ -88,11 +88,17 @@ tokens = (
     'WHILE', 
 )
 
-precedence = ( ('left', 'PLUS', 'MINUS'),
-              ('left', 'TIMES', 'DIVIDE'),  #binds more tightly
+precedence = (
+              ('left', 'LARROW'), #binds loosest
+              ('left' , 'NOT'),
               ('nonassoc', 'EQUALS'),
               ('nonassoc', 'LT'),
-              ('nonassoc', 'LE')
+              ('nonassoc', 'LE'),
+              ('left', 'PLUS', 'MINUS'),
+              ('left', 'TIMES', 'DIVIDE'),  
+              ('nonassoc' , 'ISVOID'),
+              ('nonassoc' , 'TILDE'),
+              ('nonassoc' , 'AT') #binds tightest
               )
 
 def p_program_classlist(p):
@@ -237,10 +243,6 @@ def p_exp_assign(p):
     'exp : identifier LARROW exp'
     p[0] = (p.lineno(2), 'assign', p[1], p[3])
 
-# def p_exp_call(p):
-#     'exp : identifier LPAREN RPAREN'
-#     p[0] = (p.lineno(1), 'assign', p[1])
-            
 def p_exp_self_dispatch(p):
     '''exp : identifier LPAREN exp_list RPAREN
            | identifier LPAREN RPAREN'''
@@ -248,13 +250,14 @@ def p_exp_self_dispatch(p):
         p[0] = (p.lineno(2), 'self_dispatch', p[1], [])
     else:
         p[0] = (p.lineno(2), 'self_dispatch', p[1], p[3])
-def p_exp_static_dispatch(p):
-    '''exp : exp identifier LPAREN exp_list RPAREN
-            | exp identifier LPAREN RPAREN'''
-    if len(p) == 5:
-        p[0] = (p.lineno(2), 'static_dispatch', p[1], p[2] , [])
+
+def p_exp_dispatch_static(p):
+    '''exp : exp AT type DOT identifier LPAREN exp_list RPAREN
+        | exp AT type DOT identifier LPAREN RPAREN'''
+    if len(p) == 9:
+        p[0] = (p.lineno(2), 'static_dispatch', p[1], p[3] ,p[5], p[7])
     else:
-        p[0] = (p.lineno(2), 'static_dispatch', p[1], p[2], p[4])
+        p[0] = (p.lineno(2), 'static_dispatch', p[1], p[3], p[5], [])
 
 def p_exp_dynamic_dispatch(p):
     '''exp : exp DOT identifier LPAREN exp_list RPAREN
@@ -310,12 +313,6 @@ def p_case_list(p):
         p[0] = [(p.lineno(1), p[1], p[3], p[5])]
     else:
         p[0] = [(p.lineno(1), p[1], p[3], p[5])] + p[7]
-
-
-
-def p_exp_dispatch_static(p):
-    'exp : exp AT type DOT identifier LPAREN exp_list RPAREN'
-    p[0] = (p.lineno(2), 'static_dispatch', p[1], p[3], p[5], p[7])
 
 def p_exp_list_empty(p):
     'exp_list : exp'
